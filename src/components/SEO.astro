@@ -1,0 +1,47 @@
+---
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_KEYWORDS, SITE_COPYRIGHT, SITE_URL, SITE_SOCIAL_IMAGE, SITE_TWITTER_HANDLE } from "@/constants/meta";
+
+interface Props {
+  title?: string;
+  description?: string;
+  robots?: string;
+  image?: string;
+}
+
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  robots = "index, follow",
+  image = SITE_SOCIAL_IMAGE,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+---
+
+<meta charset="UTF-8" />
+<title>{title}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+<meta name="robots" content={robots} />
+<meta name="author" content="CLXD" />
+<meta name="keywords" content={SITE_KEYWORDS} />
+
+{/* <link rel="manifest" href="/site.webmanifest" /> */}
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+{image && <meta property="og:image" content={new URL(image, Astro.url)} />}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={Astro.url} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:creator" content={SITE_TWITTER_HANDLE} />
+{image && <meta name="twitter:image" content={new URL(image, Astro.url)} />}
+
+<meta name="copyright" content={SITE_COPYRIGHT} />

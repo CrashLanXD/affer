@@ -1,23 +1,31 @@
+---
+import '@/styles/global.css';
+import '@/styles/animations.css';
+import { ClientRouter } from 'astro:transitions';
+import SEO from '@/components/SEO.astro';
+
+import ThemeManager from '@/components/ThemeManager.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+	robots?: string;
+	loadArt?: boolean;
+}
+
+const { title, description, robots, loadArt = true } = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<SEO title={title} description={description} robots={robots} />
+		<meta name="theme-color" content="#ffffff" />
+		<ThemeManager defaultTheme="auto" />
+		<ClientRouter />
+		<!-- {loadArt && <script src="@/core/math-art/art-init.ts"></script>} -->
 	</head>
 	<body>
 		<slot />
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>

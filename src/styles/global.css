@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant light (&:is([data-theme="light"] *));
+@custom-variant sl (&:is([data-theme="light"], [data-theme="light"] &));
+@custom-variant sd (&:is([data-theme="dark"], [data-theme="dark"] &));
+@custom-variant any-hover {
+  @media (any-hover: hover) {
+    @slot;
+  }
+}
+
+@theme {
+  --color-p-blue: #198cd9; 
+  --color-p-green: #78be20;
+  --color-p-yellow: #ffb500;
+  --color-p-orange: #ff8200;
+  --color-p-red: #ef3827;
+
+  --color-p: hsl(275 80% 70%);
+  
+  --color-light: #e5e4d1;
+  --color-dark: light-dark(#343232, #111111);
+
+  --color-r-white: #e5e4d1;
+  --color-r-black: light-dark(#343232, #111111);
+  --color-r-red: #e22f2e;
+  --color-r-orange: #dc6d2c;
+  --color-r-yellow: #ddb631;
+  
+  --color-primary: hsl(var(--hue) 80% 70%);
+
+  --font-sans: 'Geist Sans', ui-sans-serif. system-ui, sans-serif;
+  --font-mono: "Geist mono", ui-monospace, monospace;
+  --font-pixel-square: "Geist Pixel Square";
+  --font-pixel-grid: "Geist Pixel Grid";
+  --font-pixel-circle: "Geist Pixel Circle";
+  --font-pixel-triangle: "Geist Pixel Triangle";
+  --font-pixel-line: "Geist Pixel Line";
+  
+  --animate-hue-rotation: hue-rotation 30s linear infinite;
+
+  @keyframes hue-rotation {
+    from { --hue: 0; }
+    to { --hue: 360; }
+  }
+}
+
+@property --hue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 70;
+}
+
+@property --color-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: hsl(var(--hue) 80% 70%);
+}
+
+@property --_h {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 100vh;
+}
+
+@property --_w {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 100vw;
+}
+
+@utility container {
+  @apply max-w-432 mx-auto;
+}
+
+@layer base {
+  [data-theme="light"] { @apply scheme-light; }
+  [data-theme="dark"] { @apply scheme-dark; }
+
+  html {
+    @apply scroll-smooth;
+    @apply animate-hue-rotation bg-primary selection:bg-primary;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) light-dark(var(--color-neutral-100), var(--color-neutral-900));
+  }
+
+  body {
+    @apply min-h-dvh w-full overflow-x-hidden font-sans;
+    @apply bg-neutral-100 dark:bg-neutral-900;
+    @apply text-neutral-800 dark:text-neutral-100;
+  }
+
+  @font-face {
+    font-family: "Geist Sans";
+    src: url("../fonts/Geist[wght].woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("../fonts/GeistMono[wght].woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Geist Pixel Square";
+    src: url("../fonts/GeistPixel-Square.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Geist Pixel Circle";
+    src: url("../fonts/GeistPixel-Circle.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Geist Pixel Grid";
+    src: url("../fonts/GeistPixel-Grid.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Geist Pixel Triangle";
+    src: url("../fonts/GeistPixel-Triangle.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Geist Pixel Line";
+    src: url("../fonts/GeistPixel-Line.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
+@layer utilities {
+  :root {
+    --screenWidth: tan(atan2(var(--_w), 1px));
+    --screenHeight: tan(atan2(var(--_h), 1px));
+  }
+}

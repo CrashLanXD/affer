@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-blurred-fade-in: blurred-fade-in 0.9s ease-in-out both;  
+
+  --animate-fade-in-down: fade-in-down 0.6s ease-in-out both;
+  --animate-fade-in-left: fade-in-left 0.6s ease-in-out both;
+  --animate-fade-in-right: fade-in-right 0.6s ease-in-out both;
+  --animate-fade-in-up: fade-in-up 0.6s ease-in-out both;
+  --animate-fade-in: fade-in 0.6s ease-in both;
+
+  --animate-slide-in-top: slide-in-top 0.6s ease-out both;
+  --animate-slide-in-bottom: slide-in-bottom 0.6s ease-out both;
+  --animate-slide-in-left: slide-in-left 0.6s ease-out both;
+  --animate-slide-in-right: slide-in-right 0.6s ease-out both;
+
+  --animate-slide-out-top: slide-out-top 0.6s ease-out both;
+  --animate-slide-out-bottom: slide-out-bottom 0.6s ease-out both;
+  --animate-slide-out-left: slide-out-left 0.6s ease-out both;
+  --animate-slide-out-right: slide-out-right 0.6s ease-out both;
+
+  --animate-slide-up-fade: slide-up-fade 0.6s ease-out both;
+
+  --animate-zoom-in: zoom-in 0.6s ease-out both;
+
+  --motion-offset: 1.25rem;
+
+  @keyframes blurred-fade-in {
+    from { opacity: 0; filter: blur(5px); }
+    to   { opacity: 1; filter: blur(0px); }
+  }
+
+  @keyframes fade-in-down {
+    from { opacity: 0; transform: translateY(calc(var(--motion-offset) * -1)); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in-left {
+    from { opacity: 0; transform: translateX(var(--motion-offset)); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fade-in-right {
+    from { opacity: 0; transform: translateX(calc(var(--motion-offset) * -1)); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(var(--motion-offset)); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-in-top {
+    from { transform: translateY(calc(var(--motion-offset) * -1)); }
+    to { transform: translateY(0); }
+  }
+  @keyframes slide-in-bottom {
+    from { transform: translateY(var(--motion-offset)); }
+    to { transform: translateY(0); }
+  }
+  @keyframes slide-in-left {
+    from { transform: translateX(calc(var(--motion-offset) * -1)); }
+    to { transform: translateX(0); }
+  }
+  @keyframes slide-in-right {
+    from { transform: translateX(var(--motion-offset)); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes slide-out-top {
+    from { transform: translateY(0); }
+    to { transform: translateY(calc(var(--motion-offset) * -1)); }
+  }
+  @keyframes slide-out-bottom {
+    from { transform: translateY(0); }
+    to { transform: translateY(var(--motion-offset)); }
+  }
+  @keyframes slide-out-left {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(var(--motion-offset) * -1)); }
+  }
+  @keyframes slide-out-right {
+    from { transform: translateX(0); }
+    to { transform: translateX(var(--motion-offset)); }
+  }
+
+  @keyframes slide-up-fade {
+    from { opacity: 0; transform: translateY(var(--motion-offset)); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes zoom-in {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+}
+
+@utility motion-offset-* {
+  --motion-offset: --value([length]);
+  --motion-offset: calc(var(--spacing) * --value(number));
+}
+
+@utility animate-duration-* { animation-duration: --value(integer)ms; }
+@utility animate-delay-* { animation-delay: --value(integer)ms; }
+
+@utility animate-normal { animation-direction: normal; }
+@utility animate-reverse { animation-direction: reverse; }
+@utility animate-alternate { animation-direction: alternate; }
+@utility animate-running { animation-play-state: running; }
+@utility animate-paused { animation-play-state: paused; }
+
+@utility range-entry-* { --range-entry: calc(--value(integer) * 1%); }
+@utility range-cover-* { --range-cover: calc(--value(integer) * 1%); }
+
+@utility animate-on-view {
+  animation-range: entry var(--range-entry, 5%) cover var(--range-cover, 30%);
+  animation-timeline: view();
+}
