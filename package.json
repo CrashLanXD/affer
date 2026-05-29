@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "pnpm --parallel dev",
     "build:core": "pnpm --filter zyphora build",
-    "build:docs": "pnpm --filter zyphora-js build",
+    "build:docs": "pnpm --filter zyphora-docs build",
     "build": "pnpm build:core && pnpm build:docs",
-    "deploy": "pnpm build && pnpm --filter zyphora-js exec wrangler deploy"
+    "deploy": "pnpm build && pnpm --filter zyphora-docs exec wrangler deploy"
   },
   "pnpm": {
     "overrides": {
