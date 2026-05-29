@@ -23,7 +23,7 @@ const { title, description, robots, loadArt = true } = Astro.props;
 		<meta name="theme-color" content="#ffffff" />
 		<ThemeManager defaultTheme="auto" />
 		<ClientRouter />
-		<!-- {loadArt && <script src="@/core/math-art/art-init.ts"></script>} -->
+		{loadArt && <script src="@/core/math-art-init.ts"></script>}
 	</head>
 	<body>
 		<slot />

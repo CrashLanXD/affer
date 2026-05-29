@@ -40,6 +40,13 @@
   
   --animate-hue-rotation: hue-rotation 30s linear infinite;
 
+  --text-f-base-min: 14;
+  --text-f-base-max: 20;
+  --text-f-ratio-min: 1.1;
+  --text-f-ratio-max: 1.33;
+  --text-f-width-min: 375;
+  --text-f-width-max: 1500;
+
   @keyframes hue-rotation {
     from { --hue: 0; }
     to { --hue: 360; }
@@ -148,5 +155,20 @@
   :root {
     --screenWidth: tan(atan2(var(--_w), 1px));
     --screenHeight: tan(atan2(var(--_h), 1px));
+
+    :where(.text-fluid) {
+      --text-f-min: calc(var(--text-f-base-min) * pow(var(--text-f-ratio-min), var(--text-f-level, 0)));
+      --text-f-max: calc(var(--text-f-base-max) * pow(var(--text-f-ratio-max), var(--text-f-level, 0)));
+      --text-f-scale: calc((var(--text-f-max) - var(--text-f-min)) / (var(--text-f-width-max) - var(--text-f-width-min)));
+      --text-f-size: clamp((var(--text-f-min) / 16) * 1rem, ((var(--text-f-min) / 16) * 1rem) - (((var(--text-f-scale) * var(--text-f-width-min)) / 16) * 1rem) + (var(--text-f-scale) * var(--text-f-unit, 100vi)), (var(--text-f-max) / 16) * 1rem);
+      font-size: var(--text-f-size);
+    }
   }
 }
+
+@utility fluid-base-min  { --text-f-base-min: --value(number); }
+@utility fluid-base-max  { --text-f-base-max: --value(number); }
+@utility fluid-ratio-min { --text-f-ratio-min: --value(number); }
+@utility fluid-ratio-max { --text-f-ratio-max: --value(number); }
+@utility fluid-width-min { --text-f-width-min: --value(number); }
+@utility fluid-width-max { --text-f-width-max: --value(number); }

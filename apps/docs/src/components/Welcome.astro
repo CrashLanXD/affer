@@ -1,12 +1,6 @@
 ---
 ---
 
-<div class="container font-pixel-square">
-  <h1 class="text-fluid">
-    Zyphora.js
-  </h1>
-</div>
-
 <a class="CLXD" href="https://CLXD.DEV" target="_blank" rel="noopener noreferrer"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 700 700">
     <path d="m156 367.9 44 13.1 15.7 184-59.7-61ZM500 381l44-13.1V504l-57.9 61zM145 495.2l-59-62.5v-85.2l59 17.9zm410 0V365.4l59-17.9v85.2zM33.7 331 77 345v80l-46-45Zm632.6 0c-.7-.5 2.7 49 2.7 49l-46 45v-80z"></path>
     <path fill="currentColor" d="M550 330s-79 54.3-81 55v195l-65-108 2.2 172.8h-35V451.1l58.8-.1v-41H270v41l60.8-.1v193.9H296V472l-65 108 .1-195-81.1-55 200-185M222 325.5l71 52.5h114l71-52.5L350 197Zm-199 6L62 290l137-91 20-39 84-53V55l42-15v103L25 336.2ZM355 143V40l42 15v52l84 53 20 39 137 91 39 41.5-2 4.7z"></path>
@@ -16,49 +10,11 @@
 <style>
 	@reference "#global.css";
 
-	:root {
-		--text-f-base-min: 14;
-    --text-f-base-max: 20;
-    --text-f-ratio-min: 1.1;
-    --text-f-ratio-max: 1.33;
-    --text-f-width-min: 375;
-    --text-f-width-max: 1500;
-	}
-
-	h1 {
-    --text-f-base-max: 24;
-    --text-f-level: 6;
-    text-align: center;
-  }
-
 	body {
     background: light-dark(var(--color-r-white), var(--color-r-black));
     color: light-dark(var(--color-r-black), var(--color-r-white));
     align-content: center;
     min-height: 100dvh;
-  }
-
-	:where(.text-fluid) {
-    --text-f-min: calc(
-      var(--text-f-base-min) *
-        pow(var(--text-f-ratio-min), var(--text-f-level, 0))
-    );
-    --text-f-max: calc(
-      var(--text-f-base-max) *
-        pow(var(--text-f-ratio-max), var(--text-f-level, 0))
-    );
-    --text-f-scale: calc(
-      (var(--text-f-max) - var(--text-f-min)) /
-        (var(--text-f-width-max) - var(--text-f-width-min))
-    );
-    --text-f-size: clamp(
-      (var(--text-f-min) / 16) * 1rem,
-      ((var(--text-f-min) / 16) * 1rem) -
-        (((var(--text-f-scale) * var(--text-f-width-min)) / 16) * 1rem) +
-        (var(--text-f-scale) * var(--text-f-unit, 100vi)),
-      (var(--text-f-max) / 16) * 1rem
-    );
-    font-size: var(--text-f-size);
   }
 
   a.CLXD {

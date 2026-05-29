@@ -1,0 +1,44 @@
+---
+interface Props {
+  defaultTheme: "auto" | "dark" | "light" | undefined;
+}
+
+const { defaultTheme } = Astro.props;
+---
+
+<script is:inline data-default-theme={defaultTheme}>
+  (() => {
+    const storageKey = "zyphora-theme";
+    const defaultThemeAttr = document.currentScript.getAttribute("data-default-theme") || "auto";
+    const store = typeof localStorage !== "undefined" ? localStorage : { getItem: () => null, setItem: () => {} };
+
+    const mediaMatcher = window.matchMedia("(prefers-color-scheme: light)");
+    const getSystemTheme = () => mediaMatcher.matches ? "light" : "dark";
+
+    function applyTheme(themeValue) {
+      const resolvedTheme = themeValue === "auto" ? getSystemTheme() : themeValue;
+      document.documentElement.setAttribute("data-theme", resolvedTheme);
+      document.documentElement.dataset.theme = resolvedTheme;
+      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeColorMeta) {
+        const themeColors = { light: "#e5e4d1", dark: "#343232" }
+        themeColorMeta.setAttribute('content', themeColors[resolvedTheme] || themeColors.light);
+      }
+      window.dispatchEvent(new CustomEvent("theme-changed", { detail: { theme: themeValue, systemTheme: getSystemTheme(), defaultTheme: defaultThemeAttr, resolvedTheme } }));
+    }
+    const manager = {
+      setTheme: (theme) => { store.setItem(storageKey, theme); applyTheme(theme); },
+      getTheme: () => { return store.getItem(storageKey) || defaultThemeAttr; },
+      getSystemTheme,
+    }
+    window.theme = manager;
+    applyTheme(manager.getTheme());
+    mediaMatcher.addEventListener("change", () => (manager.getTheme() == "auto" && applyTheme("auto")));
+  })();
+  window.theme.setTheme(window.theme.getTheme());
+</script>
+<script>
+  document.addEventListener("astro:after-swap", () => {
+    if (window.theme) window.theme.setTheme(window.theme.getTheme());
+  });
+</script>
