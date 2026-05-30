@@ -9,14 +9,14 @@ import SpeedFollower from "../components/SpeedFollower.astro";
   <SpeedFollower />
   <Welcome />
   <div class="w-full flex justify-center items-center relative h-dvh">
-    <div class="w-full mb-0 h-full absolute bottom-0 mix-blend-difference sl:mix-blend-darken">
+    <div class="container font-pixel-square animate-fade-in mx-auto">
+      <h1 class="text-fluid">Zyphora<span class="text-p">.js</span></h1>
+      <p class="font-mono text-center text-base -mt-1">Framerate-independent input tracking for high-performance creative coding.</p>
+    </div>
+    <div class="w-full mb-0 h-full absolute bottom-0 mix-blend-exclusion sl:mix-blend-difference">
       <canvas id="art" class="art w-full opacity-0"
         data-config='{"slices":1,"effectType":"none","isMouseLocked":true,"fitParent":true}'
       ></canvas>
-    </div>
-    <div class="container font-pixel-square animate-fade-in mx-auto">
-      <h1 class="text-fluid">Zyphora<span class="text-p">.js</span></h1>
-      <p class="font-mono text-center text-sm -mt-1">Framerate-independent input tracking for high-performance creative coding.</p>
     </div>
   </div>
   {/*<div class="w-full flex justify-center items-center relative h-400 mt-20">
@@ -39,8 +39,8 @@ import SpeedFollower from "../components/SpeedFollower.astro";
       --artStroke: var(--color-p);
     }
     &[data-theme="light"] {
-      --artFill: #e5e4d1;
-      --artStroke: #111111;
+      --artFill: #000;
+      --artStroke: hsl(95, 80%, 70%);
     }
   }
 
@@ -67,6 +67,8 @@ import SpeedFollower from "../components/SpeedFollower.astro";
     {"count":180,"size":20,"sides":5,"shape":"rect","scale":0.92,"velocity":0.3,"freq":3.786,"twist":0,"twirl":0.0062,"lump":3.098,"noise":0,"baseAmp":76,"ampX":2,"ampY":2.5,"zoom":1.4,"top":20,"left":0,"axis":"x","aspectRatio":1.524,"effectType":"none","slices":1,"mouseX":0.154,"mouseY":0.871},
     {"count":59,"size":40,"sides":3.25,"shape":"polygon","scale":1.5,"velocity":0.5,"freq":2,"twist":20,"twirl":0.05,"lump":0.1,"noise":0.2,"baseAmp":150,"ampX":1.2,"ampY":1.2,"zoom":1.5,"axis":"xy","effectType":"helix","slices":11,"mouseX":0.875,"mouseY":0.875,"scaleMode":"contain"},
     {"count":82,"size":30,"sides":6,"shape":"triangle","scale":0.8,"velocity":0.1,"freq":4.6,"twist":32,"twirl":0.09,"lump":0.3,"noise":4.3,"baseAmp":80,"ampX":1.15,"ampY":0.55,"zoom":1.4,"top":200,"left":105,"aspectRatio":3,"isMatrix":true,"mouseX":1,"mouseY":1},
+    {"count":39,"shape":"ellipse","scale":3,"velocity":0.2,"curl":-54.95,"ampX":-3.2,"ampY":4.2,"top":90,"left":460,"isDial":true,"mouseX":0.831,"mouseY":0.502},
+    {"count":170,"shape":"heart","scale":2.2,"velocity":0.3,"freq":3,"twist":0,"lump":0.25,"ampX":2,"ampY":2.4,"zoom":1.95,"top":10,"left":75,"isSpiral":true,"mouseX":0.98,"mouseY":0.475}
   ];
 
   let heroInstance: AbortController | null = null;
