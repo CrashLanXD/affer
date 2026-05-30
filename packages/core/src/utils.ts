@@ -13,6 +13,17 @@ export function lerp(start: number, end: number, factor: number): number {
 }
 
 /**
+ * Linearly interpolates between two values independently of frame rate.
+ * @param start Current value
+ * @param end Target value
+ * @param speed Speed factor (higher = faster)
+ * @param dt Delta time in seconds
+ */
+export function lerpContextual(start: number, end: number, speed: number, dt: number): number {
+  return start + (end - start) * (1 - Math.exp(-speed * dt));
+}
+
+/**
  * Maps a number from one range to another.
  */
 export function mapRange(

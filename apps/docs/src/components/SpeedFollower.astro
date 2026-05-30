@@ -1,0 +1,69 @@
+---
+---
+
+<div
+  id="mouse-follower"
+  class="fixed top-0 left-0 pointer-events-none z-9999 opacity-0 will-change-transform transition-opacity duration-200 select-none flex items-center gap-1.5 bg-neutral-900/90 text-white font-mono text-[10px] px-2 py-1 rounded-md border border-neutral-700 shadow-lg"
+>
+  <div class="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse"></div>
+  <span id="follower-speed">0 px/s</span>
+</div>
+
+<script>
+  import { Ticker } from 'zyphora';
+  import { $mouse } from '@/stores/input-store';
+
+  let abortController: AbortController | null = null;
+
+  document.addEventListener("astro:page-load", () => {
+    const follower = document.querySelector("#mouse-follower") as HTMLDivElement | null;
+    const speedText = document.querySelector("#follower-speed") as HTMLSpanElement | null;
+
+    console.log("hi!", follower, speedText);
+    
+    if (!follower || !speedText) return;
+
+    // Limpieza de instancias anteriores para mitigar memory leaks en SPA
+    if (abortController) abortController.abort();
+    abortController = new AbortController();
+    const { signal } = abortController;
+
+    // Obtenemos la referencia única al tracker de Zyphora
+    const tracker = $mouse.get();
+
+    const tick = () => {
+      // Si el tracker no se ha inicializado o el mouse no ha entrado a la ventana
+      if (!tracker || !tracker.isInside) {
+        follower.classList.add("opacity-0");
+        return;
+      }
+
+      // 1. Mostrar el seguidor
+      follower.classList.remove("opacity-0");
+
+      // 2. Posicionamiento instantáneo (CERO DELAY)
+      // Agregamos un ligero offset (+12px) para que no tape la punta de la flecha nativa del cursor
+      const posX = tracker.px.x + 12;
+      const posY = tracker.px.y + 12;
+      
+      // translate3d activa la aceleración por hardware en la GPU para máxima suavidad
+      follower.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
+
+      // 3. Render de la velocidad actual
+      // Redondeamos para evitar el parpadeo de los decimales
+      speedText.innerText = `${Math.round(tracker.velocity)} px/s`;
+    };
+
+    // Añadir el loop directo al Ticker optimizado de Zyphora
+    Ticker.add(tick);
+
+    // Si el componente se desmonta, nos desenganchamos del Ticker
+    signal.addEventListener("abort", () => {
+      Ticker.remove(tick);
+    });
+  });
+
+  document.addEventListener("astro:before-preparation", () => {
+    if (abortController) abortController.abort();
+  });
+</script>

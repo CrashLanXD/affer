@@ -10,6 +10,7 @@ export type TickCallback = (data: TickData) => void;
 class TickerClass {
   private listeners = new Set<TickCallback>();
   private listenersArray: TickCallback[] = [];
+  private tickData: TickData = { deltaTime: 0, elapsedTime: 0 };
   private rafId: number | null = null;
   private lastTime = 0;
   private elapsedTime = 0;
@@ -66,12 +67,13 @@ class TickerClass {
     this.lastTime = now;
     this.elapsedTime += deltaTime;
 
-    const data: TickData = { deltaTime, elapsedTime: this.elapsedTime };
+    this.tickData.deltaTime = deltaTime;
+    this.tickData.elapsedTime = this.elapsedTime;
 
     const len = this.listenersArray.length;
     for (let i = 0; i < len; i++) {
       try {
-        this.listenersArray[i](data);
+        this.listenersArray[i](this.tickData);
       } catch (err) {
         console.error('Zyphora Ticker Callback Error:', err);
       }

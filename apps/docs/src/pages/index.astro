@@ -1,9 +1,12 @@
 ---
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+
+import SpeedFollower from "../components/SpeedFollower.astro";
 ---
 
 <Layout>
+  <SpeedFollower />
   <Welcome />
   <div class="w-full flex justify-center items-center relative h-dvh">
     <div class="w-full mb-0 h-full absolute bottom-0 mix-blend-difference sl:mix-blend-darken">
@@ -13,8 +16,20 @@ import Layout from "../layouts/Layout.astro";
     </div>
     <div class="container font-pixel-square animate-fade-in mx-auto">
       <h1 class="text-fluid">Zyphora<span class="text-p">.js</span></h1>
+      <p class="font-mono text-center text-sm -mt-1">Framerate-independent input tracking for high-performance creative coding.</p>
     </div>
   </div>
+  {/*<div class="w-full flex justify-center items-center relative h-400 mt-20">
+    <p>Enim ullamco tempor adipisicing dolore est. Excepteur elit occaecat aliquip consequat deserunt eiusmod. Aute commodo veniam laboris nostrud commodo commodo irure deserunt mollit culpa dolore laboris nulla. Pariatur eu mollit consectetur nisi nostrud reprehenderit laborum. Fugiat incididunt et nisi non occaecat fugiat fugiat nulla eiusmod ex commodo aliqua.</p>
+
+    <p>Qui et do eiusmod fugiat aliqua duis eiusmod elit ex minim excepteur ad laborum. Adipisicing aliqua dolore deserunt quis ullamco ex sint tempor id. Irure ex veniam enim nisi. Pariatur aliqua aute id anim nulla anim veniam dolor ea proident veniam amet tempor id. Exercitation non duis laborum eu ut do proident Lorem ea minim.</p>
+
+    <p>Duis deserunt amet Lorem est irure in duis qui eiusmod mollit duis nostrud non. Adipisicing tempor proident in ut do nulla. Commodo nostrud et exercitation voluptate cupidatat deserunt cupidatat ad aliqua. Veniam commodo reprehenderit sunt pariatur Lorem dolor.</p>
+
+    <p>Culpa ex labore eiusmod velit do sit amet cillum minim nostrud cillum fugiat consectetur Lorem. Laborum reprehenderit qui ex mollit ea proident dolore. Ut nisi eu deserunt non eiusmod aute minim elit culpa. Est ex eiusmod eu tempor tempor velit labore dolor fugiat. Consectetur reprehenderit ex aute occaecat ex. Sunt occaecat duis et fugiat esse consectetur duis sit incididunt adipisicing laborum. Exercitation est consectetur Lorem duis dolore.</p>
+
+    <p>Exercitation aliquip et eiusmod esse culpa tempor. Ex fugiat sunt proident sunt esse dolor id non. Et consequat id esse consectetur mollit qui ipsum ex irure enim.</p>
+  </div>*/}
 </Layout>
 
 <style>
@@ -40,18 +55,21 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
   import type { MathArtCanvas } from "@crashlanxd/math-art";
-  import { Ticker, MouseTracker, lerp } from 'zyphora';
+  import { Ticker, lerp } from 'zyphora';
+  import { $mouse } from "@/stores/input-store";
 
   const CONFIGS = [
     {"count":200,"shape":"rect","scale":1.5,"velocity":0.4,"freq":7,"twist":0,"twirl":0.1,"lump":-0.05,"noise":0,"ampX":5,"ampY":1,"zoom":1.95,"top":15,"left":0,"axis":"x","aspectRatio":1.2,"mouseX":0.825,"mouseY":0.255},
     {"count":80,"shape":"ellipse","scale":1.8,"velocity":0.85,"freq":2,"twist":11,"twirl":0.007,"lump":0.2,"noise":0.5,"ampX":-1,"ampY":1,"zoom":1.95,"top":0,"left":0,"axis":"x","aspectRatio":2.389,"isBalls":true,"mouseX":0.02,"mouseY":0.2},
     {"count":150,"shape":"ellipse","scale":2.5,"velocity":0.4,"freq":5,"twist":0.5,"twirl":0.001,"lump":0.235,"noise":0,"ampX":0,"ampY":2.5,"zoom":1.95,"top":25,"left":0,"axis":"x","aspectRatio":1.5,"mouseX":1,"mouseY":0.568},
-    {"count":106,"shape":"rect","scale":0.5,"velocity":0.4,"freq":1,"twist":0,"twirl":0.5,"lump":0,"noise":0,"ampX":2.8,"ampY":2.8,"zoom":1.8,"top":-50,"left":10,"axis":"xy","aspectRatio":1,"slices":6,"effectType":"starburst","mouseX":0.8674768518518519,"mouseY":0.58}
+    {"count":106,"shape":"rect","scale":0.5,"velocity":0.4,"freq":1,"twist":0,"twirl":0.5,"lump":0,"noise":0,"ampX":2.8,"ampY":2.8,"zoom":1.8,"top":-50,"left":10,"axis":"xy","aspectRatio":1,"slices":6,"effectType":"starburst","mouseX":0.8674768518518519,"mouseY":0.58},
+    {"count":69,"size":20,"sides":8,"shape":"polygon","scale":0.71,"velocity":1,"freq":1.2237,"twist":11,"twirl":0.03,"lump":0.6,"noise":0.1,"baseAmp":170,"ampX":0.25,"ampY":-0.2,"zoom":1.3,"top":15,"left":0,"axis":"x","aspectRatio":0.2,"effectType":"none","slices":1,"mouseX":0,"mouseY":0.5248},
+    {"count":180,"size":20,"sides":5,"shape":"rect","scale":0.92,"velocity":0.3,"freq":3.786,"twist":0,"twirl":0.0062,"lump":3.098,"noise":0,"baseAmp":76,"ampX":2,"ampY":2.5,"zoom":1.4,"top":20,"left":0,"axis":"x","aspectRatio":1.524,"effectType":"none","slices":1,"mouseX":0.154,"mouseY":0.871},
+    {"count":59,"size":40,"sides":3.25,"shape":"polygon","scale":1.5,"velocity":0.5,"freq":2,"twist":20,"twirl":0.05,"lump":0.1,"noise":0.2,"baseAmp":150,"ampX":1.2,"ampY":1.2,"zoom":1.5,"axis":"xy","effectType":"helix","slices":11,"mouseX":0.875,"mouseY":0.875,"scaleMode":"contain"},
+    {"count":82,"size":30,"sides":6,"shape":"triangle","scale":0.8,"velocity":0.1,"freq":4.6,"twist":32,"twirl":0.09,"lump":0.3,"noise":4.3,"baseAmp":80,"ampX":1.15,"ampY":0.55,"zoom":1.4,"top":200,"left":105,"aspectRatio":3,"isMatrix":true,"mouseX":1,"mouseY":1},
   ];
 
   let heroInstance: AbortController | null = null;
-  let mouse: MouseTracker | null = null;
-  let tickCallback: (() => void) | null = null;
 
   document.addEventListener("astro:page-load", () => {
     const canvas = document.querySelector("#art") as MathArtCanvas | null;
@@ -63,18 +81,11 @@ import Layout from "../layouts/Layout.astro";
 
     let BASE_X = 0.5;
     let BASE_Y = 0.5;
-    const NUDGE_INTENSITY = 0.15; // Máximo de alteración posicional
-    const LERP_FACTOR = 0.08;     // Velocidad de transición interna de Zyphora
+    const NUDGE_INTENSITY = 0.15;
+    const LERP_FACTOR = 0.06;
 
     let currentX = BASE_X;
     let currentY = BASE_Y;
-    
-    // 1. Añadimos una variable para controlar la fuerza del mouse de manera fluida
-    let mouseInfluence = 0; 
-    let isMouseOverCanvas = false;
-
-    canvas.addEventListener('mouseenter', () => { isMouseOverCanvas = true; }, { signal });
-    canvas.addEventListener('mouseleave', () => { isMouseOverCanvas = false; }, { signal });
 
     let canvasRect = canvas.getBoundingClientRect();
     const updateCanvasRect = () => {
@@ -88,12 +99,12 @@ import Layout from "../layouts/Layout.astro";
       if (!canvas.artInstance) return;
       canvas.artInstance.setConfig(CONFIGS[Math.floor(Math.random() * CONFIGS.length)] as any);
       canvas.artInstance.setConfig("isMouseLocked", true);
+
       BASE_X = canvas.artInstance.config.mouseX;
       BASE_Y = canvas.artInstance.config.mouseY;
-
       currentX = BASE_X;
       currentY = BASE_Y;
-      mouseInfluence = 0; // Reiniciar influencia al cambiar de config
+
       updateCanvasRect(); 
       canvas.artInstance.onReady(() => canvas.classList.add("animate-fade-in"));
     };
@@ -101,44 +112,38 @@ import Layout from "../layouts/Layout.astro";
     if (canvas.artInstance) initHeroCanvas();
     else canvas.addEventListener("art-ready", initHeroCanvas, { once: true, signal });
 
-    // Instanciamos el MouseTracker pasándole tu factor de suavizado
-    mouse = new MouseTracker({ lerpFactor: LERP_FACTOR });
+    const tracker = $mouse.get();
 
-    tickCallback = () => {
-      if (!canvas.artInstance || !mouse) return;
+    const tick = () => {
+      if (!canvas.artInstance || !tracker) return;
 
-      // 2. Calculamos el objetivo de la influencia: 1 si está dentro, 0 si está fuera
-      const targetInfluence = (isMouseOverCanvas && mouse.inputType === 'mouse') ? 1 : 0;
-      
-      // 3. Suavizamos la influencia frame a frame usando el lerp de Zyphora
-      mouseInfluence = lerp(mouseInfluence, targetInfluence, LERP_FACTOR);
+      const mX = tracker.lerpPx.x, mY = tracker.lerpPx.y;
+      const inInsideCanvas = mX >= canvasRect.left && mX <= canvasRect.right && mY >= canvasRect.top && mY <= canvasRect.bottom;
 
-      // 4. IMPORTANTE: Usamos 'lerpCentered' en lugar de 'centered' para absorber
-      // el ruido de lectura por hardware del ratón.
-      const deltaX = mouse.lerpCentered.x;
-      const deltaY = -mouse.lerpCentered.y; 
+      let targetX = BASE_X;
+      let targetY = BASE_Y;
 
-      // 5. La posición actual se calcula aplicando el porcentaje de influencia actual.
-      // Cuando mouseInfluence es 0, currentX es exactamente BASE_X.
-      currentX = BASE_X + (deltaX * NUDGE_INTENSITY * mouseInfluence);
-      currentY = BASE_Y + (deltaY * NUDGE_INTENSITY * mouseInfluence);
+      if (inInsideCanvas && tracker.isInside) {
+        const localX = (mX - canvasRect.left) / canvasRect.width;
+        const localY = (mY - canvasRect.top) / canvasRect.height;
+        targetX = BASE_X + (localX - BASE_X) * NUDGE_INTENSITY;
+        targetY = BASE_Y + (localY - BASE_Y) * NUDGE_INTENSITY;
+      }
 
-      // Enviamos las coordenadas limpias y fluidas al motor de arte
+      currentX = lerp(currentX, targetX, LERP_FACTOR);
+      currentY = lerp(currentY, targetY, LERP_FACTOR);
+
       canvas.artInstance.setConfig({ mouseX: currentX, mouseY: currentY });
     };
 
-    Ticker.add(tickCallback);
+    Ticker.add(tick);
+
+    signal.addEventListener('abort', () => {
+      Ticker.remove(tick);
+    });
   });
 
   document.addEventListener("astro:before-preparation", () => {
     if (heroInstance) heroInstance.abort();
-    if (tickCallback) {
-      Ticker.remove(tickCallback);
-      tickCallback = null;
-    }
-    if (mouse) {
-      mouse.destroy();
-      mouse = null;
-    }
   });
 </script>

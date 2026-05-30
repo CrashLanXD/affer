@@ -26,6 +26,11 @@ const { title, description, robots, loadArt = true } = Astro.props;
 		{loadArt && <script src="@/core/math-art-init.ts"></script>}
 	</head>
 	<body>
+		<script>
+      import { startMouseTracking, stopMouseTracking } from '@/stores/input-store';
+      document.addEventListener('astro:page-load', startMouseTracking);
+      document.addEventListener('astro:before-preparation', stopMouseTracking);
+    </script>
 		<slot />
 	</body>
 </html>
