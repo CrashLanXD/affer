@@ -1,8 +1,8 @@
 {
-  "name": "zyphora",
-  "version": "0.0.1",
+  "name": "affer",
+  "version": "0.0.0-alpha.0",
+  "description": "Framerate-independent input tracking for high-performance creative coding.",
   "type": "module",
-  "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,14 +15,35 @@
   },
   "scripts": {
     "build": "vite build",
-    "dev": "vite build --watch"
+    "dev": "vite build --watch",
+    "dev:core": "vite",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^25.9.1",
     "eslint": "^10.4.0",
+    "globals": "^17.6.0",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.0",
     "vite": "^7.2.0",
     "vite-plugin-dts": "^5.0.1"
-  }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "framerate",
+    "input",
+    "tracker",
+    "ticker",
+    "mouse",
+    "creative-coding",
+    "viewport"
+  ],
+  "license": "MIT",
+  "author": "CLXD"
 }

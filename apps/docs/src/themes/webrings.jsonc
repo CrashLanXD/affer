@@ -1,0 +1,43 @@
+{
+  "name": "webrings",
+  "type": "dark",
+  "colors": {
+    "editor.background": "#000000",
+    "editor.foreground": "#ffffff"
+  },
+  "tokenColors": [
+    {
+      "scope": "comment",
+      "settings": { "foreground": "#aaaaaa" }
+    },
+    {
+      "scope": "punctuation",
+      "settings": { "foreground": "#999999" }
+    },
+    {
+      "scope": [
+        "constant.numeric",
+        "constant.language",
+        "entity.name.tag",
+        "variable.language"
+      ],
+      "settings": { "foreground": "#00ccff" }
+    },
+    {
+      "scope": ["string", "entity.other.attribute-name"],
+      "settings": { "foreground": "#ffff00" }
+    },
+    {
+      "scope": ["keyword", "storage", "keyword.control"],
+      "settings": { "foreground": "#ff1493" }
+    },
+    {
+      "scope": ["variable", "operator", "entity.name.type"],
+      "settings": { "foreground": "#9acd32" }
+    },
+    {
+      "scope": "invalid",
+      "settings": { "foreground": "#ff0000" }
+    }
+  ]
+}

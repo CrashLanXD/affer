@@ -1,103 +1,131 @@
-# Zyphora.js Monorepo 🌀
+# Affer.js 🌀
 
-Welcome to the official repository of **Zyphora.js**, a high-performance input-capture engine designed for creative coding, fluid interactions, and zero-layout-thrashing animations.
+> **Headless browser trackers.**
+>
+> Get browser data, not UI.
 
-This repository is managed as a Monorepo using **pnpm workspaces**.
+Affer.js is a framework-agnostic ecosystem of browser trackers that collect, normalize, synchronize, and expose browser data through a consistent API.
 
-🌐 **Live Documentation & Demos:** [zyphora.clxd.dev](https://zyphora.clxd.dev)
+Instead of implementing dozens of event listeners, state managers, and animation loops, Affer provides reusable trackers that work together under a shared update cycle.
+
+**Current version:** `0.0.0-alpha.0`
+
+> This is an early alpha release. APIs may change while the project evolves.
 
 ---
 
-## 📁 Repository Structure
+## What is Affer?
+
+Affer is not a UI library.
+
+It doesn't render components nor animate anything.
+
+It answers one question:
+
+> **"Where does the data come from?"**
+
+Mouse position.
+Keyboard state.
+Scroll progress.
+Viewport information.
+Touch gestures.
+Multiple browser windows.
+
+Affer keeps these values updated and ready to use so you can focus on building interactions instead of implementing infrastructure.
+
+---
+
+## Philosophy
+
+Every module follows the same principles:
+
+- Headless (no UI, no CSS)
+- Framework agnostic
+- Tree-shakeable
+- Real-time updates
+- Shared architecture
+- Consistent APIs
+- Optional modules
+
+Every tracker:
+
+- has state
+- exposes `update()`
+- can run inside a ticker
+- can run inside your own loop
+- can be combined with other trackers
+
+---
+
+## Packages
 
 ```text
-zyphora.js/
-├── apps/
-│   └── docs/            # Astro 6 + Tailwind CSS documentation website
-├── packages/
-│   └── core/            # Main Zyphora library source code (TypeScript + Vite)
-├── .npmrc.example       # Authentication template for private packages
-├── package.json         # Root orchestration package
-└── pnpm-workspace.yaml
+packages/
+└── core        → npm package
 
+apps/
+└── docs        → documentation website
 ```
 
 ---
 
-## 🛠️ Local Development Setup
+## Repository Structure
 
-### 1. Prerequisites
-
-Ensure you have **Node.js ($\ge$ 22.12.0)** and **pnpm** installed globally on your machine.
-
-### 2. Private Package Authentication (`.npmrc`)
-
-This project relies on a private package registry hosted via GitHub Packages. To install dependencies successfully, you must configure your local environment credentials:
-
-1. Copy the template file in the root directory:
-
-```bash
-cp .npmrc.example .npmrc
-
+```text
+affer/
+├── apps/
+│   └── docs/
+├── packages/
+│   └── core/
+├── package.json
+├── pnpm-workspace.yaml
+└── README.md
 ```
 
-2. Open your newly created `.npmrc` file and replace `${GITHUB_TOKEN}` with your personal **GitHub Classic Access Token** (with `read:packages` permissions).
+---
 
-> ⚠️ **Note:** The `.npmrc` file contains sensitive credentials and is automatically ignored by Git via `.gitignore`. Never commit it.
+## Development
 
-### 3. Installation
-
-Install all workspaces dependencies simultaneously from the root folder:
+Install dependencies:
 
 ```bash
 pnpm install
-
 ```
 
----
-
-## 🚀 CLI Commands
-
-Run these scripts from the repository root using your terminal:
-
-### Start Development Server
-
-Launches the Astro documentation website with hot module reloading (HMR). It automatically tracks changes made in the core library workspace in real-time.
+Run documentation locally:
 
 ```bash
 pnpm dev
-
 ```
 
-### Build the Core Library
-
-Compiles the TypeScript source files inside `packages/core` into optimized, production-ready ES Modules (`dist/index.js`).
-
-```bash
-pnpm build:core
-
-```
-
-### Build the Documentation Website
-
-Compiles the Astro application into a highly-optimized static layout ready for Cloudflare Pages deployment.
-
-```bash
-pnpm build:docs
-
-```
-
-### Production Build (All)
-
-Compiles both the core library and the documentation sequence seamlessly.
+Build everything:
 
 ```bash
 pnpm build
+```
 
+Build only the package:
+
+```bash
+pnpm build:core
+```
+
+Build only the documentation:
+
+```bash
+pnpm build:docs
 ```
 
 ---
 
-## 📜 License
+## Documentation
 
-This project is licensed under the **MIT License**. See the `LICENSE` file for details.
+Documentation and examples are available at:
+
+https://affer.clxd.dev
+
+---
+
+## License
+
+MIT

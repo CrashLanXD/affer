@@ -1,0 +1,139 @@
+:root {
+
+    --clr-accent-200: #feb3a6;
+    --clr-accent-600: #c90e00;
+    --clr-accent-900: #640300;
+    --clr-accent-950: #460b05;
+
+    --clr-gray-100: #f9f5f5;
+    --clr-gray-200: #f3ecea;
+    --clr-gray-300: #c8c0be;
+    --clr-gray-400: #978784;
+    --clr-gray-500: #635451;
+    --clr-gray-700: #423432;
+    --clr-gray-800: #302321;
+    --clr-gray-900: #1d1715;
+
+
+    &[data-theme="light"] {
+      --artStroke: oklch(0.140 0 0);
+      --artBackground: var(--color-neutral-50);
+    }
+
+    &[data-theme="dark"] {
+      --artStroke: var(--color-neutral-100);
+      --artBackground: var(--color-neutral-950);
+
+      --clr-accent-200: var(--color-neutral-200);
+      --clr-accent-600: var(--color-neutral-600);
+      --clr-accent-900: var(--color-neutral-900);
+      --clr-accent-950: var(--color-neutral-950);
+
+      --clr-gray-100: var(--color-neutral-100);
+      --clr-gray-200: var(--color-neutral-200);
+      --clr-gray-300: var(--color-neutral-300);
+      --clr-gray-400: var(--color-neutral-400);
+      --clr-gray-500: var(--color-neutral-500);
+      --clr-gray-700: var(--color-neutral-700);
+      --clr-gray-800: var(--color-neutral-800);
+      --clr-gray-900: var(--color-neutral-950);
+    }
+
+    &[data-theme="omaha"] {
+      --artBackground: #efeff9;
+      --artStroke: #5657ca;
+      --clr-accent-200: #afa6fe;
+      --clr-accent-600: #c600c9;
+      --clr-accent-900: #5a0064;
+      --clr-accent-950: #370546;
+
+      --clr-gray-100: #f9f5f7;
+      --clr-gray-200: #eaf3ed;
+      --clr-gray-300: #bebfc8;
+      --clr-gray-400: #978484;
+      --clr-gray-500: #516351;
+      --clr-gray-700: #373242;
+      --clr-gray-800: #302c21;
+      --clr-gray-900: #151d16;
+    }
+
+    &[data-theme*="crt-"] {
+      --artBackground: var(--crt-bg-dark);
+      --artStroke: var(--crt-primary);
+    }
+
+    &[data-theme="crt-green"] {
+      --crt-primary: #00CB00;
+      --crt-accent: #00CC00;
+      --crt-secondary: #014D00;
+      --crt-bg-dark: #011700;
+      --crt-bg-medium: #012500;
+      --crt-bg-deep: #010F00;
+
+      --crt-secondary-opacity: #014D0025;
+      --crt-primary-opacity: #00CB0020;
+    }
+
+    &[data-theme="crt-amber"] {
+      --crt-primary: #E49F02;
+      --crt-accent: #E49F02;
+      --crt-secondary: #553A01;
+      --crt-bg-dark: #170F01;
+      --crt-bg-medium: #271B01;
+      --crt-bg-deep: #120C01;
+
+      --crt-secondary-opacity: #4D330025;
+      --crt-primary-opacity: #FFB00020;
+    }
+
+    &[data-theme="webrings"] {
+      body {
+        background-attachment: fixed;
+        background: var(--theme-bg);
+      }
+
+      --theme-bg: url('../../assets/star-bg.gif');
+      --artBackground: #000000;
+      --artStroke: #cccccc;
+      --scrollbar-color: #8c1f9480;
+      --error-color: #74fbfd;
+      --error-rule-color: #ff5;
+      --error-bg-color: #000;
+      --error-text-color: #74fbfd;
+      --color-background: #000 !important;
+      --color-foreground: #74fbfd !important;
+    }
+
+    &[data-theme="crt-amber"] .expressive-code pre {
+      box-shadow: inset 0 0 10px #4d3300, 0 0 15px rgba(228, 159, 2, 0.1);
+      border: 1px solid #5c3e00;
+    }
+
+    &[data-theme="crt-amber"] .expressive-code .ec-line {
+      text-shadow: 0 0 2px #e49f02;
+    }
+
+    &[data-theme="crt-amber"] .expressive-code pre::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(to bottom,
+          transparent 0px,
+          transparent 1px,
+          rgba(255, 176, 0, 0.05) 2px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    &[data-theme="webrings"] .expressive-code .frame pre code {
+      background-color: #fff;
+      background-image: url('data:image/svg+xml;charset=utf-8,<svg%20version%3D"1.1"%20xmlns%3D"http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg"%20width%3D"100"%20height%3D"100"%20fill%3D"rgba(0%2C0%2C0%2C.2)">%0D%0A<polygon%20points%3D"0%2C50%2050%2C0%200%2C0"%20%2F>%0D%0A<polygon%20points%3D"0%2C100%2050%2C100%20100%2C50%20100%2C0"%20%2F>%0D%0A<%2Fsvg>');
+      background-size: 1em 1em;
+
+      span {
+        background-color: transparent;
+        background: #000;
+        box-shadow: 4px 0 0 4px black;
+      }
+    }
+  }

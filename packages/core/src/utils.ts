@@ -26,13 +26,8 @@ export function lerpContextual(start: number, end: number, speed: number, dt: nu
 /**
  * Maps a number from one range to another.
  */
-export function mapRange(
-  value: number,
-  inMin: number,
-  inMax: number,
-  outMin: number,
-  outMax: number
-): number {
+export function mapRange(value: number, inMin: number, inMax: number, outMin: number, outMax: number): number {
+  if (inMin === inMax) return outMin;
   return outMin + ((value - inMin) / (inMax - inMin)) * (outMax - outMin);
 }
 
@@ -40,10 +35,7 @@ export function mapRange(
  * Debounces a function, delaying its execution until a specified delay has passed
  * since the last time it was called.
  */
-export function debounce<T extends (...args: any[]) => void>(
-  fn: T,
-  delay: number
-): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   return function (this: any, ...args: Parameters<T>) {
     if (timeoutId !== null) {
@@ -58,19 +50,26 @@ export function debounce<T extends (...args: any[]) => void>(
 
 /**
  * Throttles a function, limiting its execution to at most once per limit duration.
+ * Includes both leading edge (immediate execution) and trailing edge (guarantees the last call executes).
  */
-export function throttle<T extends (...args: any[]) => void>(
-  fn: T,
-  limit: number
-): (...args: Parameters<T>) => void {
-  let inThrottle = false;
+export function throttle<T extends (...args: any[]) => void>(fn: T, limit: number): (...args: Parameters<T>) => void {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let trailingCall: (() => void) | null = null;
+
   return function (this: any, ...args: Parameters<T>) {
-    if (!inThrottle) {
+    if (!timeoutId) {
       fn.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => {
-        inThrottle = false;
-      }, limit);
+      const cooldown = () => {
+        if (trailingCall) {
+          trailingCall();
+          trailingCall = null;
+          timeoutId = setTimeout(cooldown, limit);
+        } else timeoutId = null;
+      };
+
+      timeoutId = setTimeout(cooldown, limit);
+    } else {
+      trailingCall = () => fn.apply(this, args);
     }
   };
 }
@@ -85,8 +84,37 @@ export function dist(x1: number, y1: number, x2: number, y2: number): number {
 }
 
 /**
+ * Calculates the squared Euclidean distance.
+ * Faster than dist() because it avoids the square root.
+ * Use this for distance comparisons.
+ */
+export function distSq(x1: number, y1: number, x2: number, y2: number): number {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  return dx * dx + dy * dy;
+}
+
+/**
  * Calculates the angle between two points in radians (relative to x-axis, clockwise direction).
  */
 export function angle(x1: number, y1: number, x2: number, y2: number): number {
   return Math.atan2(y2 - y1, x2 - x1);
+}
+
+/**
+ * Wraps a value around a range.
+ */
+export function wrap(value: number, min: number, max: number): number {
+  const range = max - min;
+  return ((((value - min) % range) + range) % range) + min;
+}
+
+/**
+ * Normalizes a value to a 0-1 range based on a min and max.
+ * Like mapRange, but strictly clamped to [0, 1].
+ * @note When min === max, return 0 to avoid division by zero.
+ */
+export function normalize(value: number, min: number, max: number): number {
+  if (min === max) return 0;
+  return clamp((value - min) / (max - min), 0, 1);
 }

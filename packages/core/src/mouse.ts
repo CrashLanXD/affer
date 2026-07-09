@@ -1,5 +1,6 @@
-import Ticker from './ticker';
-import { lerp, lerpContextual, dist, angle } from './utils';
+import Ticker, { type TickCallback, type TickData } from "./ticker";
+import Viewport from "./viewport";
+import { lerp, lerpContextual, dist, angle } from "./utils";
 
 export interface MouseCoordinates {
   x: number;
@@ -9,61 +10,70 @@ export interface MouseCoordinates {
 export interface MouseTrackerOptions {
   /** Interpolation factor for smooth coordinates. Default 10 */
   lerpFactor?: number;
-  /** Whether touch movement should update coordinates. Default true */
+  /**
+   * Whether touch should be treated as a single pointer substitute for mouse.
+   * For multi-touch gestures (pinch, swipe), use TouchTracker instead.
+   */
   trackTouch?: boolean;
   /** Optional callback fired when the cursor moves */
-  onMove?: (tracker: MouseTracker) => void;
+  onMove?:     (tracker: MouseTracker) => void;
+
+  externalTicker?: boolean;
 }
 
 export class MouseTracker {
+  
   /** Current raw coordinates in pixels */
-  public px: MouseCoordinates = { x: 0, y: 0 };
+  public px:         MouseCoordinates = { x: 0, y: 0 };
   /** Normalized coordinates [0, 1] relative to viewport dimensions */
   public normalized: MouseCoordinates = { x: 0.5, y: 0.5 };
   /** Normalized coordinates [-1, 1] centered on the viewport (ideal for WebGL) */
-  public centered: MouseCoordinates = { x: 0, y: 0 };
+  public centered:   MouseCoordinates = { x: 0, y: 0 };
 
   /** Smoothed raw coordinates in pixels */
-  public lerpPx: MouseCoordinates = { x: 0, y: 0 };
+  public lerpPx:         MouseCoordinates = { x: 0, y: 0 };
   /** Smoothed normalized coordinates [0, 1] */
   public lerpNormalized: MouseCoordinates = { x: 0.5, y: 0.5 };
   /** Smoothed centered coordinates [-1, 1] */
-  public lerpCentered: MouseCoordinates = { x: 0, y: 0 };
+  public lerpCentered:   MouseCoordinates = { x: 0, y: 0 };
 
   /** Cursor speed in pixels per second */
   public velocity = 0;
   /** Angle of movement in radians */
   public angle = 0;
-  /** Direction name representation (e.g. 'up', 'down-right', 'none') */
-  public direction = 'none';
+  /** Direction name representation (e.g. "up", "down-right", "none") */
+  public direction = "none";
 
   /** Whether the mouse cursor is currently inside the document window */
   public isInside = false;
   /** Whether the mouse button / touch screen is pressed */
   public isPressed = false;
 
-  /** Active input device: 'mouse' or 'touch' */
-  public inputType: 'mouse' | 'touch' = 'mouse';
+  /** Active input device: "mouse" or "touch" */
+  public inputType:     "mouse" | "touch" = "mouse";
   /** Number of clicks detected within the last 1 second */
   public clicksPerSecond = 0;
   /** Streak of rapid clicks (within 400ms interval) */
   public clickStreak = 0;
-  /** Last clicked button: 'left', 'middle', 'right', or 'none' */
-  public lastClickType: 'left' | 'middle' | 'right' | 'none' = 'none';
+  /** Last clicked button: "left", "middle", "right", or "none" */
+  public lastClickType: "left" | "middle" | "right" | "none" = "none";
+  public isDestroyed = false;
 
-
-  private lerpFactor: number;
-  private trackTouch: boolean;
+  private lerpFactor:      number;
+  private trackTouch:      boolean;
   private onMoveCallback?: (tracker: MouseTracker) => void;
 
   private prevPx: MouseCoordinates = { x: 0, y: 0 };
   private hasMovedThisFrame = false;
   private hasEntered = false;
-  private clickTimes: number[] = [];
   private lastClickTime = 0;
 
-  private windowWidth = 1;
-  private windowHeight = 1;
+  private clickTimes = new Float64Array(32); // Should this be 64 or more?
+  private clickIndex = 0;
+
+  private _externalTicker: boolean;
+  private _lastExternalTick = 0;
+  private _tickerCallback: TickCallback | null = null;
 
   constructor(options: MouseTrackerOptions = {}) {
     this.lerpFactor = options.lerpFactor ?? 10;
@@ -72,11 +82,8 @@ export class MouseTracker {
 
     this.update = this.update.bind(this);
 
-    this.resizeCache();
-
-    // Starting values centered, but we snap upon actual document entry
-    const startX = this.windowWidth / 2;
-    const startY = this.windowHeight / 2;
+    const startX = Viewport.width / 2;
+    const startY = Viewport.height / 2;
 
     this.px = { x: startX, y: startY };
     this.prevPx = { x: startX, y: startY };
@@ -86,68 +93,56 @@ export class MouseTracker {
     this.updateLerpCoords(startX, startY);
 
     this.initListeners();
-    Ticker.add(this.update);
-  }
-
-  private resizeCache(): void {
-    if (typeof window !== 'undefined') {
-      this.windowWidth = window.innerWidth || 1;
-      this.windowHeight = window.innerHeight || 1;
-    };
-  }
-
-  private handleResize = (): void => {
-    this.resizeCache();
+    this._externalTicker = options.externalTicker ?? false;
+    if (!this._externalTicker) {
+      this._tickerCallback = (data: TickData) => this.update(data.deltaTime);
+      Ticker.add(this._tickerCallback);
+    }
   }
 
   private initListeners(): void {
-    if (typeof window === 'undefined') return;
-    window.addEventListener('resize',    this.handleResize,    { passive: true });
-    window.addEventListener('mousemove', this.handleMouseMove, { passive: true });
-    window.addEventListener('mousedown', this.handleMouseDown, { passive: true });
-    window.addEventListener('mouseup',   this.handleMouseUp,   { passive: true });
+    if (typeof window === "undefined") return;
+    window.addEventListener("mousemove", this.handleMouseMove, { passive: true });
+    window.addEventListener("mousedown", this.handleMouseDown, { passive: true });
+    window.addEventListener("mouseup",   this.handleMouseUp,   { passive: true });
     
-    window.addEventListener('mouseout', this.handleMouseOut, { passive: true });
-    window.addEventListener('blur',     this.handleBlur,     { passive: true });
+    window.addEventListener("mouseout", this.handleMouseOut, { passive: true });
+    window.addEventListener("blur",     this.handleBlur,     { passive: true });
 
     if (this.trackTouch) {
-      window.addEventListener('touchstart',  this.handleTouchStart, { passive: true });
-      window.addEventListener('touchmove',   this.handleTouchMove,  { passive: true });
-      window.addEventListener('touchend',    this.handleTouchEnd,   { passive: true });
-      window.addEventListener('touchcancel', this.handleTouchEnd,   { passive: true });
+      window.addEventListener("touchstart",  this.handleTouchStart, { passive: true });
+      window.addEventListener("touchmove",   this.handleTouchMove,  { passive: true });
+      window.addEventListener("touchend",    this.handleTouchEnd,   { passive: true });
+      window.addEventListener("touchcancel", this.handleTouchEnd,   { passive: true });
     }
   }
 
   private removeListeners(): void {
-    if (typeof window === 'undefined') return;
-    window.removeEventListener('resize',    this.handleResize);
-    window.removeEventListener('mousemove', this.handleMouseMove);
-    window.removeEventListener('mousedown', this.handleMouseDown);
-    window.removeEventListener('mouseup',   this.handleMouseUp);
+    if (typeof window === "undefined") return;
+    window.removeEventListener("mousemove", this.handleMouseMove);
+    window.removeEventListener("mousedown", this.handleMouseDown);
+    window.removeEventListener("mouseup",   this.handleMouseUp);
     
-    window.removeEventListener('mouseout', this.handleMouseOut);
-    window.removeEventListener('blur',     this.handleBlur);
+    window.removeEventListener("mouseout", this.handleMouseOut);
+    window.removeEventListener("blur",     this.handleBlur);
 
     if (this.trackTouch) {
-      window.removeEventListener('touchstart',  this.handleTouchStart);
-      window.removeEventListener('touchmove',   this.handleTouchMove);
-      window.removeEventListener('touchend',    this.handleTouchEnd);
-      window.removeEventListener('touchcancel', this.handleTouchEnd);
+      window.removeEventListener("touchstart",  this.handleTouchStart);
+      window.removeEventListener("touchmove",   this.handleTouchMove);
+      window.removeEventListener("touchend",    this.handleTouchEnd);
+      window.removeEventListener("touchcancel", this.handleTouchEnd);
     }
   }
 
   private updateCoords(clientX: number, clientY: number): void {
     this.px.x = clientX;
     this.px.y = clientY;
+    
+    this.normalized.x = clientX / Viewport.width;
+    this.normalized.y = clientY / Viewport.height;
 
-    const w = this.windowWidth;
-    const h = this.windowHeight;
-
-    this.normalized.x = clientX / w;
-    this.normalized.y = clientY / h;
-
-    this.centered.x = (clientX / w) * 2 - 1;
-    this.centered.y = (clientY / h) * -2 + 1; // Standardize WebGL: y-up positive
+    this.centered.x = (clientX / Viewport.width) * 2 - 1;
+    this.centered.y = (clientY / Viewport.height) * -2 + 1; // Standardize WebGL: y-up positive
   }
 
   private updateLerpCoords(clientX: number, clientY: number): void {
@@ -161,9 +156,11 @@ export class MouseTracker {
 
   private handleMouseMove = (e: MouseEvent): void => {
     this.isInside = true;
-    this.inputType = 'mouse';
+    this.inputType = "mouse";
     if (!this.hasEntered) {
       this.hasEntered = true;
+      this.prevPx.x = e.clientX;
+      this.prevPx.y = e.clientY;
       this.updateCoords(e.clientX, e.clientY);
       this.updateLerpCoords(e.clientX, e.clientY);
     } else {
@@ -175,21 +172,18 @@ export class MouseTracker {
 
   private handleMouseDown = (e: MouseEvent): void => {
     this.isPressed = true;
-    this.inputType = 'mouse';
+    this.inputType = "mouse";
 
     // Determine click type
-    if (e.button === 0) this.lastClickType = 'left';
-    else if (e.button === 1) this.lastClickType = 'middle';
-    else if (e.button === 2) this.lastClickType = 'right';
-    else this.lastClickType = 'none';
+    if (e.button === 0) this.lastClickType = "left";
+    else if (e.button === 1) this.lastClickType = "middle";
+    else if (e.button === 2) this.lastClickType = "right";
+    else this.lastClickType = "none";
 
     // Click streak and clicks per second
     const now = performance.now();
-    this.clickTimes.push(now);
-    
-    // Clean old clicks
-    while (this.clickTimes.length > 0 && now - this.clickTimes[0] > 1000) this.clickTimes.shift();
-    this.clicksPerSecond = this.clickTimes.length;
+    this.clickTimes[this.clickIndex] = now;
+    this.clickIndex = (this.clickIndex + 1) & 31;
 
     if (now - this.lastClickTime < 400) {
       this.clickStreak++;
@@ -218,11 +212,13 @@ export class MouseTracker {
   private handleTouchStart = (e: TouchEvent): void => {
     this.isInside = true;
     this.isPressed = true;
-    this.inputType = 'touch';
+    this.inputType = "touch";
     if (e.touches.length > 0) {
       const touch = e.touches[0];
       if (!this.hasEntered) {
         this.hasEntered = true;
+        this.prevPx.x = touch.clientX;
+        this.prevPx.y = touch.clientY;
         this.updateCoords(touch.clientX, touch.clientY);
         this.updateLerpCoords(touch.clientX, touch.clientY);
       } else {
@@ -234,7 +230,7 @@ export class MouseTracker {
 
   private handleTouchMove = (e: TouchEvent): void => {
     this.isInside = true;
-    this.inputType = 'touch';
+    this.inputType = "touch";
     if (e.touches.length > 0) {
       const touch = e.touches[0];
       this.updateCoords(touch.clientX, touch.clientY);
@@ -246,14 +242,24 @@ export class MouseTracker {
     this.isPressed = false;
   };
 
-  private update(data: { deltaTime: number }): void {
-    const dt = data.deltaTime / 1000;
+  public update(deltaTime?: number): void {
+    let dt: number;
+
+    if (deltaTime !== undefined) dt = deltaTime / 1000;
+    else { // Standalone mode
+      const now = performance.now();
+      const rawDelta = this._lastExternalTick > 0 ? now - this._lastExternalTick : 16.67;
+      this._lastExternalTick = now;
+      dt = rawDelta / 1000;
+    }
+
     if (dt <= 0) return;
 
     // Decay click speed telemetry
     const now = performance.now();
-    while (this.clickTimes.length > 0 && now - this.clickTimes[0] > 1000) this.clickTimes.shift();
-    this.clicksPerSecond = this.clickTimes.length;
+    let activeClicks = 0;
+    for (let i = 0; i < 32; i++) if (now - this.clickTimes[i] < 1000) activeClicks++;
+    this.clicksPerSecond = activeClicks;
 
     // Manhattan distance
     const lerpDiff = Math.abs(this.lerpPx.x - this.px.x) + Math.abs(this.lerpPx.y - this.px.y);
@@ -299,7 +305,7 @@ export class MouseTracker {
       this.velocity = lerp(this.velocity, 0, 0.15);
       if (this.velocity < 1) {
         this.velocity = 0;
-        this.direction = 'none';
+        this.direction = "none";
       }
 
       // While LERP is still active, we're still moving
@@ -327,7 +333,7 @@ export class MouseTracker {
     this.prevPx.x = x;
     this.prevPx.y = y;
     this.velocity = 0;
-    this.direction = 'none';
+    this.direction = "none";
     if (this.onMoveCallback) this.onMoveCallback(this);
   }
 
@@ -347,7 +353,7 @@ export class MouseTracker {
 
     // Rounding quadrants: right is at 0/360, down is 90, left is 180, up is 270
     const index = Math.round(deg / 45) % 8;
-    const directions = ['right', 'down-right', 'down', 'down-left', 'left', 'up-left', 'up', 'up-right'];
+    const directions = ["right", "down-right", "down", "down-left", "left", "up-left", "up", "up-right"];
     return directions[index];
   }
 
@@ -355,9 +361,14 @@ export class MouseTracker {
    * Destroys this instance, cleaning up all mouse and Ticker listeners.
    */
   public destroy(): void {
+    this.isDestroyed = true;
     this.removeListeners();
-    Ticker.remove(this.update);
+    if (this._tickerCallback) {
+      Ticker.remove(this._tickerCallback);
+      this._tickerCallback = null;
+    }
   }
+
 }
 
 export default MouseTracker;

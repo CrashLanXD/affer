@@ -4,20 +4,14 @@ import { resolve } from "path";
 
 export default defineConfig({
   plugins: [dts({ insertTypesEntry: true })],
-  build: {
-    lib: {
-      entry: resolve(__dirname, "src/index.ts"),
-      name: "Zyphora",
-      formats: ["es"],
-      fileName: "index"
+  build:   {
+    target: "esnext",
+    lib:    {
+      entry:    resolve(__dirname, "src/index.ts"),
+      name:     "affer",
+      formats:  ["es"],
+      fileName: "index",
     },
-    rollupOptions: {
-      external: [],
-      output: {
-        globals: {
-          Zyphora: "Zyphora"
-        }
-      }
-    }
-  }
+    sourcemap: true,
+  },
 });

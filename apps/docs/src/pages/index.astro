@@ -10,7 +10,7 @@ import SpeedFollower from "../components/SpeedFollower.astro";
   <Welcome />
   <div class="w-full flex justify-center items-center relative h-dvh">
     <div class="container font-pixel-square animate-fade-in mx-auto">
-      <h1 class="text-fluid">Zyphora<span class="text-p">.js</span></h1>
+      <h1 class="text-fluid">affer<span class="text-p">.js</span></h1>
       <p class="font-mono text-center text-base -mt-1">Framerate-independent input tracking for high-performance creative coding.</p>
     </div>
     <div class="w-full mb-0 h-full absolute bottom-0 mix-blend-exclusion sl:mix-blend-difference">
@@ -55,7 +55,7 @@ import SpeedFollower from "../components/SpeedFollower.astro";
 
 <script>
   import type { MathArtCanvas } from "@crashlanxd/math-art";
-  import { Ticker, lerp } from 'zyphora';
+  import { Ticker, lerp } from "affer";
   import { $mouse } from "@/stores/input-store";
 
   const CONFIGS = [
@@ -117,9 +117,9 @@ import SpeedFollower from "../components/SpeedFollower.astro";
     const tracker = $mouse.get();
 
     const tick = () => {
-      if (!canvas.artInstance || !tracker) return;
+      if (!canvas.artInstance || !tracker || tracker.isPressed) return;
 
-      const mX = tracker.lerpPx.x, mY = tracker.lerpPx.y;
+      const mX = tracker.px.x, mY = tracker.px.y;
       const inInsideCanvas = mX >= canvasRect.left && mX <= canvasRect.right && mY >= canvasRect.top && mY <= canvasRect.bottom;
 
       let targetX = BASE_X;

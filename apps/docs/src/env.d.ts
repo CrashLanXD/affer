@@ -1,8 +1,13 @@
+type CustomThemes = "omaha" | "webrings";
+type AnyTheme = CustomThemes | (string & {});
+type Theme = "auto" | "light" | "dark" | AnyTheme;
+type ResolvedTheme = "light" | "dark" | AnyTheme;
+
 interface ThemeManager {
-  setTheme(theme?: "auto" | "light" | "dark"): void;
-  getTheme(): "auto" | "light" | "dark";
+  setTheme(theme?: Theme): void;
+  getTheme(): Theme;
   getSystemTheme(): "light" | "dark";
-  getDefaultTheme(): "auto" | "light" | "dark";
+  getDefaultTheme(): Theme;
 }
 
 declare global {
@@ -13,18 +18,12 @@ declare global {
   interface WindowEventMap {
     /**
      * Fires when the theme is changed.
-     * @event theme-changed
-     * @type {CustomEvent}
-     * @property {"auto" | "light" | "dark"} theme - The configured value (knows if it's auto).
-     * @property {"light" | "dark"} systemTheme - The system theme.
-     * @property {"auto" | "light" | "dark"} defaultTheme - The default theme defined by attribute `data-default-theme`. in the script tag.
-     * @property {"auto" | "light" | "dark"} resolvedTheme - The ACTIVE theme the user has selected.
      */
     "theme-changed": CustomEvent<{
-      theme: "auto" | "light" | "dark";
-      systemTheme: "light" | "dark";
-      defaultTheme: "auto" | "light" | "dark";
-      resolvedTheme: "auto" | "light" | "dark";
+      theme: Theme;                  // The configured theme (can be "auto")
+      systemTheme: "light" | "dark"; // The system theme
+      defaultTheme: Theme;           // The component's default theme
+      resolvedTheme: ResolvedTheme;  // The applied theme (will never be "auto")
     }>;
   }
 }

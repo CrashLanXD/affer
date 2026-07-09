@@ -10,7 +10,7 @@
 </div>
 
 <script>
-  import { Ticker } from 'zyphora';
+  import { Ticker } from 'affer';
   import { $mouse } from '@/stores/input-store';
 
   let abortController: AbortController | null = null;
@@ -18,8 +18,6 @@
   document.addEventListener("astro:page-load", () => {
     const follower = document.querySelector("#mouse-follower") as HTMLDivElement | null;
     const speedText = document.querySelector("#follower-speed") as HTMLSpanElement | null;
-
-    console.log("hi!", follower, speedText);
     
     if (!follower || !speedText) return;
 
@@ -28,7 +26,7 @@
     abortController = new AbortController();
     const { signal } = abortController;
 
-    // Obtenemos la referencia única al tracker de Zyphora
+    // Obtenemos la referencia única al tracker de affer
     const tracker = $mouse.get();
 
     const tick = () => {
@@ -54,7 +52,7 @@
       speedText.innerText = `${Math.round(tracker.velocity)} px/s`;
     };
 
-    // Añadir el loop directo al Ticker optimizado de Zyphora
+    // Añadir el loop directo al Ticker optimizado de affer
     Ticker.add(tick);
 
     // Si el componente se desmonta, nos desenganchamos del Ticker

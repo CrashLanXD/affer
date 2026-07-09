@@ -1,0 +1,77 @@
+---
+import Select from "@astrojs/starlight/components/Select.astro";
+import { Icon } from "@astrojs/starlight/components";
+---
+
+<starlight-theme-select>
+  <Select
+    icon="laptop"
+    label={Astro.locals.t("themeSelect.accessibleLabel")}
+    options={[
+      { label: Astro.locals.t("themeSelect.auto"), selected: true, value: "auto" },
+      { label: Astro.locals.t("themeSelect.light"), selected: false, value: "light" },
+      { label: Astro.locals.t("themeSelect.dark"), selected: false, value: "dark" },
+      { label: "Omaha", selected: false, value: "omaha" },
+      { label: "Webrings!", selected: false, value: "webrings" },
+    ]}
+    width="6.25em"
+  />
+</starlight-theme-select>
+
+<template id="theme-custom-icons">
+  <div class="light"><Icon name="sun" /></div>
+  <div class="dark"><Icon name="moon" /></div>
+  <div class="auto"><Icon name="laptop" /></div>
+  <div class="omaha"><Icon name="setting" /></div>
+  <div class="webrings"><Icon name="star" /></div>
+</template>
+
+<script>
+  class ThemeSelector extends HTMLElement {
+    private _cleanup: (() => void) | null = null;
+
+    connectedCallback() {
+      const select = this.querySelector("select");
+      if (!select || !window.theme) return;
+
+      select.value = window.theme.getTheme();
+      this.updateIcon(select.value);
+
+      const handleSelectChange = () => { window.theme.setTheme(select.value) };
+      select.addEventListener("change", handleSelectChange);
+
+      const handleGlobalThemeChange = (e: Event) => {
+        const { theme } = (e as CustomEvent).detail;
+        if (select.value !== theme) select.value = theme;
+        this.updateIcon(theme);
+      };
+      document.addEventListener("theme-changed", handleGlobalThemeChange);
+
+      this._cleanup = () => {
+        select.removeEventListener("change", handleSelectChange);
+        document.removeEventListener("theme-changed", handleGlobalThemeChange);
+      };
+    }
+
+    disconnectedCallback() {
+      if (this._cleanup) this._cleanup();
+    }
+
+    updateIcon(theme: string) {
+      const tmpl = document.querySelector("#theme-custom-icons") as HTMLTemplateElement;
+      const customIconWrapper = tmpl?.content.querySelector(`.${theme}`);
+      const targetSvg = this.querySelector("svg.label-icon");
+      
+      if (customIconWrapper && targetSvg) {
+        const sourceSvg = customIconWrapper.querySelector("svg");
+        if (sourceSvg) {
+          targetSvg.innerHTML = sourceSvg.innerHTML;
+        }
+      }
+    }
+  }
+
+  if (!customElements.get("starlight-theme-select")) {
+    customElements.define("starlight-theme-select", ThemeSelector);
+  }
+</script>

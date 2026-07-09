@@ -5,6 +5,7 @@ import { ClientRouter } from 'astro:transitions';
 import SEO from '@/components/SEO.astro';
 
 import ThemeManager from '@/components/ThemeManager.astro';
+import Nav from '@/components/Nav.astro';
 
 interface Props {
 	title?: string;
@@ -31,6 +32,7 @@ const { title, description, robots, loadArt = true } = Astro.props;
       document.addEventListener('astro:page-load', startMouseTracking);
       document.addEventListener('astro:before-preparation', stopMouseTracking);
     </script>
+		<Nav />
 		<slot />
 	</body>
 </html>

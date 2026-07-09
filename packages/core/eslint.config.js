@@ -1,9 +1,8 @@
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import stylistic from "@stylistic/eslint-plugin";
-import { defineConfig } from "eslint/config";
 
-export default defineConfig([
+export default tseslint.config(
   {
     ignores: ["node_modules", "dist", "build", ".astro", "out", "target"],
   },
@@ -72,4 +71,4 @@ export default defineConfig([
       }],
     },
   },
-]);
+);

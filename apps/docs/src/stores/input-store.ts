@@ -1,5 +1,5 @@
 import { atom } from 'nanostores';
-import { MouseTracker } from 'zyphora';
+import { MouseTracker } from 'affer';
 
 export const $mouse = atom<MouseTracker | null>(null);
 let instance: MouseTracker | null = null;

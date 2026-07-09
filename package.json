@@ -1,18 +1,18 @@
 {
-  "name": "zyphora-monorepo",
+  "name": "affer-monorepo",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.0",
   "scripts": {
+    "dev:core": "pnpm --filter affer dev",
+    "build:core": "pnpm --filter affer build",
+    "dev:docs": "pnpm --filter docs dev",
+    "build:docs": "pnpm --filter docs build",
     "dev": "pnpm --parallel dev",
-    "build:core": "pnpm --filter zyphora build",
-    "build:docs": "pnpm --filter zyphora-docs build",
     "build": "pnpm build:core && pnpm build:docs",
-    "deploy": "pnpm build && pnpm --filter zyphora-docs exec wrangler deploy"
+    "deploy": "pnpm build && pnpm --filter docs exec wrangler deploy"
   },
-  "pnpm": {
-    "overrides": {
-      "vite": "^7.2.0"
-    }
+  "overrides": {
+    "vite": "^7.2.0"
   },
   "devDependencies": {
     "wrangler": "^4.95.0"

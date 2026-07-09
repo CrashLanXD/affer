@@ -1,0 +1,52 @@
+{
+  "name": "omaha",
+  "type": "light",
+  "colors": {
+    "editor.background": "#fbfbfb",
+    "editor.foreground": "#403f53",
+    "editor.selectionBackground": "#e0e0e0"
+  },
+  "tokenColors": [
+    {
+      "scope": "comment",
+      "settings": { "foreground": "#989fb1", "fontStyle": "italic" }
+    },
+    {
+      "scope": "punctuation",
+      "settings": { "foreground": "#403f53" }
+    },
+    {
+      "scope": [
+        "keyword",
+        "storage",
+        "entity.name.tag",
+        "entity.other.attribute-name"
+      ],
+      "settings": { "foreground": "#994cc3" }
+    },
+    {
+      "scope": [
+        "constant.numeric",
+        "constant.language",
+        "entity.name.function"
+      ],
+      "settings": { "foreground": "#aa0982" }
+    },
+    {
+      "scope": ["string", "variable"],
+      "settings": { "foreground": "#c96765" }
+    },
+    {
+      "scope": "constant.other",
+      "settings": { "foreground": "#c76b29" }
+    },
+    {
+      "scope": ["entity.name.type", "support.class"],
+      "settings": { "foreground": "#4876d6" }
+    },
+    {
+      "scope": "invalid",
+      "settings": { "foreground": "#d3423e" }
+    }
+  ]
+}

@@ -8,7 +8,7 @@ const { defaultTheme } = Astro.props;
 
 <script is:inline data-default-theme={defaultTheme}>
   (() => {
-    const storageKey = "zyphora-theme";
+    const storageKey = "affer-theme";
     const defaultThemeAttr = document.currentScript.getAttribute("data-default-theme") || "auto";
     const store = typeof localStorage !== "undefined" ? localStorage : { getItem: () => null, setItem: () => {} };
 
@@ -21,7 +21,7 @@ const { defaultTheme } = Astro.props;
       document.documentElement.dataset.theme = resolvedTheme;
       const themeColorMeta = document.querySelector('meta[name="theme-color"]');
       if (themeColorMeta) {
-        const themeColors = { light: "#e5e4d1", dark: "#343232" }
+        const themeColors = { light: "#e5e4d1", dark: "#343232", omaha: "#198cd9", webrings: "#ff8200" }
         themeColorMeta.setAttribute('content', themeColors[resolvedTheme] || themeColors.light);
       }
       window.dispatchEvent(new CustomEvent("theme-changed", { detail: { theme: themeValue, systemTheme: getSystemTheme(), defaultTheme: defaultThemeAttr, resolvedTheme } }));
