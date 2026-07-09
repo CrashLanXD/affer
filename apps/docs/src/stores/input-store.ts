@@ -1,5 +1,5 @@
-import { atom } from 'nanostores';
-import { MouseTracker } from 'affer';
+import { atom } from "nanostores";
+import { MouseTracker } from "@clxd/affer";
 
 export const $mouse = atom<MouseTracker | null>(null);
 let instance: MouseTracker | null = null;
