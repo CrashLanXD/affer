@@ -20,12 +20,12 @@ importers:
       '@astrojs/starlight':
         specifier: ^0.39.2
         version: 0.39.2(astro@6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(terser@5.48.0))(typescript@6.0.3)
+      '@clxd/affer':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@crashlanxd/math-art':
         specifier: 1.0.5
         version: 1.0.5
-      affer:
-        specifier: workspace:*
-        version: link:../../packages/core
       astro:
         specifier: ^6.3.1
         version: 6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(terser@5.48.0)

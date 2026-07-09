@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev:core": "pnpm --filter affer dev",
-    "build:core": "pnpm --filter affer build",
+    "dev:core": "pnpm --filter @clxd/affer dev",
+    "build:core": "pnpm --filter @clxd/affer build",
     "dev:docs": "pnpm --filter docs dev",
     "build:docs": "pnpm --filter docs build",
     "dev": "pnpm --parallel dev",

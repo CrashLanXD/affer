@@ -239,13 +239,13 @@ Examples include:
 # Installation
 
 ```bash
-npm install affer
+npm install @clxd/affer
 ```
 
 or
 
 ```bash
-pnpm add affer
+pnpm add @clxd/affer
 ```
 
 ---
@@ -253,7 +253,7 @@ pnpm add affer
 # Example
 
 ```ts
-import { Mouse } from "affer";
+import { Mouse } from "@clxd/affer";
 
 const mouse = new Mouse();
 
