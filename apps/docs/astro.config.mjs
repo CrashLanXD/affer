@@ -23,7 +23,8 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
-  integrations: [starlight({
+  integrations: [
+    starlight({
     title: 'affer.js',
     description: 'Framerate-independent input tracking for high-performance creative coding.',
     locales: {
@@ -32,6 +33,7 @@ export default defineConfig({
         lang:  "en",
       }
     },
+    disable404Route: true,
     customCss: [
       "@/styles/global.css",
       "@/styles/docs/themes.css",
@@ -53,16 +55,75 @@ export default defineConfig({
       }
     },
     sidebar: [
-      { label: 'Home', link: '/docs/' },
-      { label: 'examples', link: '/docs/example' },
+      { label: 'Overview', link: '/docs/' },
+      { label: 'Cheat Sheet', link: '/docs/cheatsheet' },
+      
       {
-        label: 'Reference',
-        items: [{ autogenerate: { directory: 'docs/guides' } }],
-      },
-      {
-        label: 'Enlaces Externos',
+        label: 'Getting Started',
         items: [
-          { label: 'Astro', link: 'https://astro.build/' },
+          { label: 'Installation', link: '/docs/getting-started/installation' },
+          { label: 'Quick Start', link: '/docs/getting-started/quick-start' },
+          { label: 'First Tracker', link: '/docs/getting-started/first-tracker' },
+        ],
+      },
+      
+      {
+        label: 'Concepts',
+        items: [
+          { label: 'Philosophy', link: '/docs/concepts/philosophy' },
+          { label: 'What are Trackers?', link: '/docs/concepts/what-are-trackers' },
+          { label: 'Framerate Independence', link: '/docs/concepts/framerate-independence' },
+          { label: 'Lifecycle Management', link: '/docs/concepts/lifecycle' },
+          { label: 'Using External Tickers', link: '/docs/concepts/external-ticker' },
+        ],
+      },
+
+      {
+        label: 'Core API',
+        items: [
+          { label: 'Ticker', link: '/docs/core/ticker' },
+          { label: 'Ticker Bundle', link: '/docs/core/ticker-bundle' },
+        ],
+      },
+      
+      {
+        label: 'Trackers Catalog',
+        items: [
+          { label: 'Introduction', link: '/docs/trackers/' },
+          { label: 'Mouse', link: '/docs/trackers/mouse' },
+          { label: 'Keyboard', link: '/docs/trackers/keyboard' },
+          { label: 'Scroll', link: '/docs/trackers/scroll' },
+          { label: 'Scroll Section', link: '/docs/trackers/scroll-section' },
+          { label: 'Touch', link: '/docs/trackers/touch' },
+          { label: 'Viewport', link: '/docs/trackers/viewport' },
+          { label: 'Virtual Joystick', link: '/docs/trackers/virtual-joystick' },
+        ],
+      },
+      
+      {
+        label: 'Advanced Guides',
+        items: [
+          { label: 'Window Cluster', link: '/docs/advanced/window-cluster' },
+          { label: 'Custom Trackers', link: '/docs/advanced/custom-trackers' },
+        ],
+      },
+      
+      {
+        label: 'Utilities & Helpers',
+        items: [
+          { label: 'Math Utils', link: '/docs/utils/math' },
+          { label: 'Timing & Delays', link: '/docs/utils/timing' },
+          { label: 'Core Helpers', link: '/docs/utils/helpers' },
+        ],
+      },
+      
+      {
+        label: 'Integration Examples',
+        items: [
+          { label: 'GSAP Synchronization', link: '/docs/examples/gsap' },
+          { label: 'Three.js Render Loop', link: '/docs/examples/three-js' },
+          { label: 'WebGL Shaders Reactivity', link: '/docs/examples/shader' },
+          { label: 'Multiple Trackers Ecosystem', link: '/docs/examples/multiple-trackers' },
         ],
       },
     ],

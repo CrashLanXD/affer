@@ -1,0 +1,41 @@
+---
+title: Installation
+description: How to integrate @clxd/affer into your JavaScript or TypeScript workflow.
+---
+
+`@clxd/affer` is natively packaged as an ES Module (ESM) and includes full, built-in TypeScript declaration types out of the box.
+
+### Package Managers
+
+Install the package from the NPM registry into your project's root folder using your preferred dependency manager:
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+<Tabs>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @clxd/affer@alpha
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm i @clxd/affer@alpha
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @clxd/affer@alpha
+    ```
+  </TabItem>
+</Tabs>
+
+> ⚠️ **Alpha Version Notice:** Because the library is currently under active core development, using the `@alpha` tag is required to fetch the latest architectural updates from the registry.
+
+### Basic Import
+
+Verify that your project bundler is resolving the package correctly by running a basic sanity check on the global Ticker instance:
+
+```typescript
+import { Ticker } from "@clxd/affer";
+
+console.log(Ticker); // Native global Ticker instance hook

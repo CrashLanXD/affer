@@ -89,7 +89,7 @@
     @apply scroll-smooth;
     @apply animate-hue-rotation bg-primary selection:bg-primary;
     scrollbar-width: thin;
-    scrollbar-color: var(--color-primary) light-dark(var(--color-neutral-100), var(--color-neutral-900));
+    /* scrollbar-color: var(--color-primary) light-dark(var(--color-neutral-100), var(--color-neutral-900)); */
   }
 
   body {

@@ -1,0 +1,125 @@
+---
+import Welcome from "../components/Welcome.astro";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <div class="w-full flex justify-center items-center relative h-dvh">
+    <div class="container font-pixel-square animate-fade-in mx-auto">
+      <h1 class="text-fluid">404</h1>
+      <p class="font-mono text-center text-lg -mt-4">That's not a valid URL, silly!</p>
+    </div>
+    <div class="w-full mb-0 h-full absolute bottom-0 mix-blend-exclusion sl:mix-blend-difference">
+      <canvas id="art" class="art w-full opacity-0"
+        data-config='{"slices":1,"effectType":"none","isMouseLocked":true,"fitParent":true}'
+      ></canvas>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  :root {
+    &[data-theme="dark"] {
+      --artFill: #000;
+      --artStroke: var(--color-p);
+    }
+    &[data-theme="light"] {
+      --artFill: #000;
+      --artStroke: hsl(95, 80%, 70%);
+    }
+  }
+
+  h1 {
+    --text-f-base-min: 20;
+    --text-f-base-max: 27;
+    --text-f-ratio-min: 1.15;
+    --text-f-level: 7;
+    text-align: center;
+  }
+</style>
+
+<script>
+  import type { MathArtCanvas } from "@crashlanxd/math-art";
+  import { Ticker, lerp } from "@clxd/affer";
+  import { $mouse } from "@/stores/input-store";
+
+  const CONFIG = {"count":3443,"size":20,"sides":5,"shape":"line","scale":63.79999923706055,"velocity":0.1,"freq":1,"twist":0,"twirl":0,"lump":0,"noise":0,"orientation":0,"curl":0,"baseAmp":80,"ampX":1,"ampY":4.400000095367432,"zoom":0.4000000059604645,"top":0,"left":0,"axis":"x","aspectRatio":1.899999976158142,"effectType":"none","slices":1,"isLineart":false,"isBalls":false,"isMatrix":false,"isSpiral":true,"isDial":true,"mouseX":0.9762997031211853,"mouseY":0.6882352828979492,"scaleMode":"contain","canvasRatio":null,"fitParent":true,"isMouseLocked":true}
+
+  let heroInstance: AbortController | null = null;
+
+  document.addEventListener("astro:page-load", () => {
+    const canvas = document.querySelector("#art") as MathArtCanvas | null;
+    if (!canvas) return;
+
+    if (heroInstance) heroInstance.abort();
+    heroInstance = new AbortController();
+    const signal = heroInstance.signal;
+
+    let BASE_X = 0.5;
+    let BASE_Y = 0.5;
+    const NUDGE_INTENSITY = 0.05;
+    const LERP_FACTOR = 0.06;
+
+    let currentX = BASE_X;
+    let currentY = BASE_Y;
+
+    let canvasRect = canvas.getBoundingClientRect();
+    const updateCanvasRect = () => {
+      if (canvas) canvasRect = canvas.getBoundingClientRect();
+    };
+
+    window.addEventListener("resize", updateCanvasRect, { passive: true, signal });
+    window.addEventListener("scroll", updateCanvasRect, { passive: true, signal });
+
+    const initHeroCanvas = () => {
+      if (!canvas.artInstance) return;
+      canvas.artInstance.setConfig(CONFIG as any);
+      canvas.artInstance.setConfig("isMouseLocked", true);
+
+      BASE_X = canvas.artInstance.config.mouseX;
+      BASE_Y = canvas.artInstance.config.mouseY;
+      currentX = BASE_X;
+      currentY = BASE_Y;
+
+      updateCanvasRect(); 
+      canvas.artInstance.onReady(() => canvas.classList.add("animate-fade-in"));
+    };
+
+    if (canvas.artInstance) initHeroCanvas();
+    else canvas.addEventListener("art-ready", initHeroCanvas, { once: true, signal });
+
+    const tracker = $mouse.get();
+
+    const tick = () => {
+      if (!canvas.artInstance || !tracker || tracker.isPressed) return;
+
+      const mX = tracker.px.x, mY = tracker.px.y;
+      const inInsideCanvas = mX >= canvasRect.left && mX <= canvasRect.right && mY >= canvasRect.top && mY <= canvasRect.bottom;
+
+      let targetX = BASE_X;
+      let targetY = BASE_Y;
+
+      if (inInsideCanvas && tracker.isInside) {
+        const localX = (mX - canvasRect.left) / canvasRect.width;
+        const localY = (mY - canvasRect.top) / canvasRect.height;
+        targetX = BASE_X + (localX - BASE_X) * NUDGE_INTENSITY;
+        targetY = BASE_Y + (localY - BASE_Y) * NUDGE_INTENSITY;
+      }
+
+      currentX = lerp(currentX, targetX, LERP_FACTOR);
+      currentY = lerp(currentY, targetY, LERP_FACTOR);
+
+      canvas.artInstance.setConfig({ mouseX: currentX, mouseY: currentY });
+    };
+
+    Ticker.add(tick);
+
+    signal.addEventListener('abort', () => {
+      Ticker.remove(tick);
+    });
+  });
+
+  document.addEventListener("astro:before-preparation", () => {
+    if (heroInstance) heroInstance.abort();
+  });
+</script>

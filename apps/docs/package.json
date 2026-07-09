@@ -20,10 +20,10 @@
   "dependencies": {
     "@astrojs/cloudflare": "^13.5.0",
     "@astrojs/starlight": "^0.39.2",
-    "astro": "^6.3.1",
-    "nanostores": "^1.3.0",
+    "@clxd/affer": "workspace:*",
     "@crashlanxd/math-art": "1.0.5",
-    "@clxd/affer": "workspace:*"
+    "astro": "^6.3.1",
+    "nanostores": "^1.3.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",
