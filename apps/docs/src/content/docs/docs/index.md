@@ -3,8 +3,6 @@ title: Overview
 description: Learn what Affer is, why it exists, and how it changes the way browser applications perceive state.
 ---
 
-# Overview
-
 **Affer** is a headless browser perception library that transforms asynchronous browser events into continuously readable state.
 
 Instead of wiring dozens of event listeners throughout your application, Affer centralizes browser input into reusable **Sensors** that remain synchronized over time and can be queried whenever your application updates.
