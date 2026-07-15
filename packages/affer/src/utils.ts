@@ -35,43 +35,104 @@ export function mapRange(value: number, inMin: number, inMax: number, outMin: nu
  * Debounces a function, delaying its execution until a specified delay has passed
  * since the last time it was called.
  */
-export function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: any[]) => void>(fn: T, delay: number):
+((...args: Parameters<T>) => void) & { cancel: () => void } {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  return function (this: any, ...args: Parameters<T>) {
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-    }
+
+  const debounced = function (this: any, ...args: Parameters<T>) {
+    if (timeoutId !== null) clearTimeout(timeoutId);
+
     timeoutId = setTimeout(() => {
       fn.apply(this, args);
       timeoutId = null;
     }, delay);
   };
+
+  debounced.cancel = function () {
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
+
+  return debounced;
 }
 
 /**
  * Throttles a function, limiting its execution to at most once per limit duration.
  * Includes both leading edge (immediate execution) and trailing edge (guarantees the last call executes).
  */
-export function throttle<T extends (...args: any[]) => void>(fn: T, limit: number): (...args: Parameters<T>) => void {
+export function throttle<T extends (...args: any[]) => void>(fn: T, limit: number): ((...args: Parameters<T>) => void) & { cancel: () => void } {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  let trailingCall: (() => void) | null = null;
+  let lastArgs: Parameters<T> | null = null;
+  let lastThis: any = null;
 
-  return function (this: any, ...args: Parameters<T>) {
+  const throttled = function (this: any, ...args: Parameters<T>) {
     if (!timeoutId) {
       fn.apply(this, args);
+
       const cooldown = () => {
-        if (trailingCall) {
-          trailingCall();
-          trailingCall = null;
+        if (lastArgs) {
+          fn.apply(lastThis, lastArgs);
+          lastArgs = null;
+          lastThis = null;
           timeoutId = setTimeout(cooldown, limit);
         } else timeoutId = null;
       };
 
       timeoutId = setTimeout(cooldown, limit);
     } else {
-      trailingCall = () => fn.apply(this, args);
+      lastArgs = args;
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      lastThis = this;
     }
   };
+
+  throttled.cancel = function () {
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    lastArgs = null;
+    lastThis = null;
+  };
+
+  return throttled;
+}
+
+/**
+ * Throttles a function to run at most once per animation frame (requestAnimationFrame).
+ */
+export function rafThrottle<T extends (...args: any[]) => void>(fn: T): ((...args: Parameters<T>) => void) & { cancel: () => void } {
+  let rafId: number | null = null;
+  let lastArgs: Parameters<T> | null = null;
+  let lastThis: any = null;
+
+  const throttled = function (this: any, ...args: Parameters<T>) {
+    lastArgs = args;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    lastThis = this;
+
+    if (rafId === null) {
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        fn.apply(lastThis, lastArgs!);
+        lastArgs = null;
+        lastThis = null;
+      });
+    }
+  };
+
+  throttled.cancel = function () {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    lastArgs = null;
+    lastThis = null;
+  };
+
+  return throttled;
 }
 
 /**

@@ -11,7 +11,7 @@ import SpeedFollower from "../components/SpeedFollower.astro";
   <div class="w-full flex justify-center items-center relative h-dvh">
     <div class="container font-pixel-square animate-fade-in mx-auto">
       <h1 class="text-fluid">affer<span class="text-p">.js</span></h1>
-      <p class="font-mono text-center text-base -mt-1">Framerate-independent input tracking for high-performance creative coding.</p>
+      <p class="font-mono text-center text-base -mt-1">A deterministic browser perception layer for real-time web applications.</p>
     </div>
     <div class="w-full mb-0 h-full absolute bottom-0 mix-blend-exclusion sl:mix-blend-difference">
       <canvas id="art" class="art w-full opacity-0"
@@ -54,98 +54,98 @@ import SpeedFollower from "../components/SpeedFollower.astro";
 </style>
 
 <script>
-  import type { MathArtCanvas } from "@crashlanxd/math-art";
-  import { Ticker, lerp } from "@clxd/affer";
-  import { $mouse } from "@/stores/input-store";
+import type { MathArtCanvas } from "@crashlanxd/math-art";
+import { Ticker, lerp } from "@clxd/affer";
+import { $mouse } from "@/stores/input-store";
 
-  const CONFIGS = [
-    {"count":200,"shape":"rect","scale":1.5,"velocity":0.4,"freq":7,"twist":0,"twirl":0.1,"lump":-0.05,"noise":0,"ampX":5,"ampY":1,"zoom":1.95,"top":15,"left":0,"axis":"x","aspectRatio":1.2,"mouseX":0.825,"mouseY":0.255},
-    {"count":80,"shape":"ellipse","scale":1.8,"velocity":0.85,"freq":2,"twist":11,"twirl":0.007,"lump":0.2,"noise":0.5,"ampX":-1,"ampY":1,"zoom":1.95,"top":0,"left":0,"axis":"x","aspectRatio":2.389,"isBalls":true,"mouseX":0.02,"mouseY":0.2},
-    {"count":150,"shape":"ellipse","scale":2.5,"velocity":0.4,"freq":5,"twist":0.5,"twirl":0.001,"lump":0.235,"noise":0,"ampX":0,"ampY":2.5,"zoom":1.95,"top":25,"left":0,"axis":"x","aspectRatio":1.5,"mouseX":1,"mouseY":0.568},
-    {"count":106,"shape":"rect","scale":0.5,"velocity":0.4,"freq":1,"twist":0,"twirl":0.5,"lump":0,"noise":0,"ampX":2.8,"ampY":2.8,"zoom":1.8,"top":-50,"left":10,"axis":"xy","aspectRatio":1,"slices":6,"effectType":"starburst","mouseX":0.8674768518518519,"mouseY":0.58},
-    {"count":69,"size":20,"sides":8,"shape":"polygon","scale":0.71,"velocity":1,"freq":1.2237,"twist":11,"twirl":0.03,"lump":0.6,"noise":0.1,"baseAmp":170,"ampX":0.25,"ampY":-0.2,"zoom":1.3,"top":15,"left":0,"axis":"x","aspectRatio":0.2,"effectType":"none","slices":1,"mouseX":0,"mouseY":0.5248},
-    {"count":180,"size":20,"sides":5,"shape":"rect","scale":0.92,"velocity":0.3,"freq":3.786,"twist":0,"twirl":0.0062,"lump":3.098,"noise":0,"baseAmp":76,"ampX":2,"ampY":2.5,"zoom":1.4,"top":20,"left":0,"axis":"x","aspectRatio":1.524,"effectType":"none","slices":1,"mouseX":0.154,"mouseY":0.871},
-    {"count":59,"size":40,"sides":3.25,"shape":"polygon","scale":1.5,"velocity":0.5,"freq":2,"twist":20,"twirl":0.05,"lump":0.1,"noise":0.2,"baseAmp":150,"ampX":1.2,"ampY":1.2,"zoom":1.5,"axis":"xy","effectType":"helix","slices":11,"mouseX":0.875,"mouseY":0.875,"scaleMode":"contain"},
-    {"count":82,"size":30,"sides":6,"shape":"triangle","scale":0.8,"velocity":0.1,"freq":4.6,"twist":32,"twirl":0.09,"lump":0.3,"noise":4.3,"baseAmp":80,"ampX":1.15,"ampY":0.55,"zoom":1.4,"top":200,"left":105,"aspectRatio":3,"isMatrix":true,"mouseX":1,"mouseY":1},
-    {"count":39,"shape":"ellipse","scale":3,"velocity":0.2,"curl":-54.95,"ampX":-3.2,"ampY":4.2,"top":90,"left":460,"isDial":true,"mouseX":0.831,"mouseY":0.502},
-    {"count":170,"shape":"heart","scale":2.2,"velocity":0.3,"freq":3,"twist":0,"lump":0.25,"ampX":2,"ampY":2.4,"zoom":1.95,"top":10,"left":75,"isSpiral":true,"mouseX":0.98,"mouseY":0.475}
-  ];
+const CONFIGS = [
+  { "count": 200,"shape": "rect","scale": 1.5,"velocity": 0.4,"freq": 7,"twist": 0,"twirl": 0.1,"lump": -0.05,"noise": 0,"ampX": 5,"ampY": 1,"zoom": 1.95,"top": 15,"left": 0,"axis": "x","aspectRatio": 1.2,"mouseX": 0.825,"mouseY": 0.255 },
+  { "count": 80,"shape": "ellipse","scale": 1.8,"velocity": 0.85,"freq": 2,"twist": 11,"twirl": 0.007,"lump": 0.2,"noise": 0.5,"ampX": -1,"ampY": 1,"zoom": 1.95,"top": 0,"left": 0,"axis": "x","aspectRatio": 2.389,"isBalls": true,"mouseX": 0.02,"mouseY": 0.2 },
+  { "count": 150,"shape": "ellipse","scale": 2.5,"velocity": 0.4,"freq": 5,"twist": 0.5,"twirl": 0.001,"lump": 0.235,"noise": 0,"ampX": 0,"ampY": 2.5,"zoom": 1.95,"top": 25,"left": 0,"axis": "x","aspectRatio": 1.5,"mouseX": 1,"mouseY": 0.568 },
+  { "count": 106,"shape": "rect","scale": 0.5,"velocity": 0.4,"freq": 1,"twist": 0,"twirl": 0.5,"lump": 0,"noise": 0,"ampX": 2.8,"ampY": 2.8,"zoom": 1.8,"top": -50,"left": 10,"axis": "xy","aspectRatio": 1,"slices": 6,"effectType": "starburst","mouseX": 0.8674768518518519,"mouseY": 0.58 },
+  { "count": 69,"size": 20,"sides": 8,"shape": "polygon","scale": 0.71,"velocity": 1,"freq": 1.2237,"twist": 11,"twirl": 0.03,"lump": 0.6,"noise": 0.1,"baseAmp": 170,"ampX": 0.25,"ampY": -0.2,"zoom": 1.3,"top": 15,"left": 0,"axis": "x","aspectRatio": 0.2,"effectType": "none","slices": 1,"mouseX": 0,"mouseY": 0.5248 },
+  { "count": 180,"size": 20,"sides": 5,"shape": "rect","scale": 0.92,"velocity": 0.3,"freq": 3.786,"twist": 0,"twirl": 0.0062,"lump": 3.098,"noise": 0,"baseAmp": 76,"ampX": 2,"ampY": 2.5,"zoom": 1.4,"top": 20,"left": 0,"axis": "x","aspectRatio": 1.524,"effectType": "none","slices": 1,"mouseX": 0.154,"mouseY": 0.871 },
+  { "count": 59,"size": 40,"sides": 3.25,"shape": "polygon","scale": 1.5,"velocity": 0.5,"freq": 2,"twist": 20,"twirl": 0.05,"lump": 0.1,"noise": 0.2,"baseAmp": 150,"ampX": 1.2,"ampY": 1.2,"zoom": 1.5,"axis": "xy","effectType": "helix","slices": 11,"mouseX": 0.875,"mouseY": 0.875,"scaleMode": "contain" },
+  { "count": 82,"size": 30,"sides": 6,"shape": "triangle","scale": 0.8,"velocity": 0.1,"freq": 4.6,"twist": 32,"twirl": 0.09,"lump": 0.3,"noise": 4.3,"baseAmp": 80,"ampX": 1.15,"ampY": 0.55,"zoom": 1.4,"top": 200,"left": 105,"aspectRatio": 3,"isMatrix": true,"mouseX": 1,"mouseY": 1 },
+  { "count": 39,"shape": "ellipse","scale": 3,"velocity": 0.2,"curl": -54.95,"ampX": -3.2,"ampY": 4.2,"top": 90,"left": 460,"isDial": true,"mouseX": 0.831,"mouseY": 0.502 },
+  { "count": 170,"shape": "heart","scale": 2.2,"velocity": 0.3,"freq": 3,"twist": 0,"lump": 0.25,"ampX": 2,"ampY": 2.4,"zoom": 1.95,"top": 10,"left": 75,"isSpiral": true,"mouseX": 0.98,"mouseY": 0.475 },
+];
 
-  let heroInstance: AbortController | null = null;
+let heroInstance: AbortController | null = null;
 
-  document.addEventListener("astro:page-load", () => {
-    const canvas = document.querySelector("#art") as MathArtCanvas | null;
-    if (!canvas) return;
+document.addEventListener("astro:page-load", () => {
+  const canvas = document.querySelector("#art") as MathArtCanvas | null;
+  if (!canvas) return;
 
-    if (heroInstance) heroInstance.abort();
-    heroInstance = new AbortController();
-    const signal = heroInstance.signal;
+  if (heroInstance) heroInstance.abort();
+  heroInstance = new AbortController();
+  const signal = heroInstance.signal;
 
-    let BASE_X = 0.5;
-    let BASE_Y = 0.5;
-    const NUDGE_INTENSITY = 0.15;
-    const LERP_FACTOR = 0.06;
+  let BASE_X = 0.5;
+  let BASE_Y = 0.5;
+  const NUDGE_INTENSITY = 0.15;
+  const LERP_FACTOR = 0.06;
 
-    let currentX = BASE_X;
-    let currentY = BASE_Y;
+  let currentX = BASE_X;
+  let currentY = BASE_Y;
 
-    let canvasRect = canvas.getBoundingClientRect();
-    const updateCanvasRect = () => {
-      if (canvas) canvasRect = canvas.getBoundingClientRect();
-    };
+  let canvasRect = canvas.getBoundingClientRect();
+  const updateCanvasRect = () => {
+    if (canvas) canvasRect = canvas.getBoundingClientRect();
+  };
 
-    window.addEventListener("resize", updateCanvasRect, { passive: true, signal });
-    window.addEventListener("scroll", updateCanvasRect, { passive: true, signal });
+  window.addEventListener("resize", updateCanvasRect, { passive: true, signal });
+  window.addEventListener("scroll", updateCanvasRect, { passive: true, signal });
 
-    const initHeroCanvas = () => {
-      if (!canvas.artInstance) return;
-      canvas.artInstance.setConfig(CONFIGS[Math.floor(Math.random() * CONFIGS.length)] as any);
-      canvas.artInstance.setConfig("isMouseLocked", true);
+  const initHeroCanvas = () => {
+    if (!canvas.artInstance) return;
+    canvas.artInstance.setConfig(CONFIGS[Math.floor(Math.random() * CONFIGS.length)] as any);
+    canvas.artInstance.setConfig("isMouseLocked", true);
 
-      BASE_X = canvas.artInstance.config.mouseX;
-      BASE_Y = canvas.artInstance.config.mouseY;
-      currentX = BASE_X;
-      currentY = BASE_Y;
+    BASE_X = canvas.artInstance.config.mouseX;
+    BASE_Y = canvas.artInstance.config.mouseY;
+    currentX = BASE_X;
+    currentY = BASE_Y;
 
-      updateCanvasRect(); 
-      canvas.artInstance.onReady(() => canvas.classList.add("animate-fade-in"));
-    };
+    updateCanvasRect(); 
+    canvas.artInstance.onReady(() => canvas.classList.add("animate-fade-in"));
+  };
 
-    if (canvas.artInstance) initHeroCanvas();
-    else canvas.addEventListener("art-ready", initHeroCanvas, { once: true, signal });
+  if (canvas.artInstance) initHeroCanvas();
+  else canvas.addEventListener("art-ready", initHeroCanvas, { once: true, signal });
 
-    const tracker = $mouse.get();
+  const tracker = $mouse.get();
 
-    const tick = () => {
-      if (!canvas.artInstance || !tracker || tracker.isPressed) return;
+  const tick = () => {
+    if (!canvas.artInstance || !tracker || tracker.isPressed) return;
 
-      const mX = tracker.px.x, mY = tracker.px.y;
-      const inInsideCanvas = mX >= canvasRect.left && mX <= canvasRect.right && mY >= canvasRect.top && mY <= canvasRect.bottom;
+    const mX = tracker.px.x, mY = tracker.px.y;
+    const inInsideCanvas = mX >= canvasRect.left && mX <= canvasRect.right && mY >= canvasRect.top && mY <= canvasRect.bottom;
 
-      let targetX = BASE_X;
-      let targetY = BASE_Y;
+    let targetX = BASE_X;
+    let targetY = BASE_Y;
 
-      if (inInsideCanvas && tracker.isInside) {
-        const localX = (mX - canvasRect.left) / canvasRect.width;
-        const localY = (mY - canvasRect.top) / canvasRect.height;
-        targetX = BASE_X + (localX - BASE_X) * NUDGE_INTENSITY;
-        targetY = BASE_Y + (localY - BASE_Y) * NUDGE_INTENSITY;
-      }
+    if (inInsideCanvas && tracker.isInside) {
+      const localX = (mX - canvasRect.left) / canvasRect.width;
+      const localY = (mY - canvasRect.top) / canvasRect.height;
+      targetX = BASE_X + (localX - BASE_X) * NUDGE_INTENSITY;
+      targetY = BASE_Y + (localY - BASE_Y) * NUDGE_INTENSITY;
+    }
 
-      currentX = lerp(currentX, targetX, LERP_FACTOR);
-      currentY = lerp(currentY, targetY, LERP_FACTOR);
+    currentX = lerp(currentX, targetX, LERP_FACTOR);
+    currentY = lerp(currentY, targetY, LERP_FACTOR);
 
-      canvas.artInstance.setConfig({ mouseX: currentX, mouseY: currentY });
-    };
+    canvas.artInstance.setConfig({ mouseX: currentX, mouseY: currentY });
+  };
 
-    Ticker.add(tick);
+  Ticker.add(tick);
 
-    signal.addEventListener('abort', () => {
-      Ticker.remove(tick);
-    });
+  signal.addEventListener("abort", () => {
+    Ticker.remove(tick);
   });
+});
 
-  document.addEventListener("astro:before-preparation", () => {
-    if (heroInstance) heroInstance.abort();
-  });
+document.addEventListener("astro:before-preparation", () => {
+  if (heroInstance) heroInstance.abort();
+});
 </script>

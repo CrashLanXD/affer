@@ -19,10 +19,10 @@ const { defaultTheme } = Astro.props;
       const resolvedTheme = themeValue === "auto" ? getSystemTheme() : themeValue;
       document.documentElement.setAttribute("data-theme", resolvedTheme);
       document.documentElement.dataset.theme = resolvedTheme;
-      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      const themeColorMeta = document.querySelector("meta[name=\"theme-color\"]");
       if (themeColorMeta) {
-        const themeColors = { light: "#e5e4d1", dark: "#343232", omaha: "#198cd9", webrings: "#ff8200" }
-        themeColorMeta.setAttribute('content', themeColors[resolvedTheme] || themeColors.light);
+        const themeColors = { light: "#e5e4d1", dark: "#343232", omaha: "#198cd9", webrings: "#ff8200" };
+        themeColorMeta.setAttribute("content", themeColors[resolvedTheme] || themeColors.light);
       }
       window.dispatchEvent(new CustomEvent("theme-changed", { detail: { theme: themeValue, systemTheme: getSystemTheme(), defaultTheme: defaultThemeAttr, resolvedTheme } }));
     }
@@ -30,7 +30,7 @@ const { defaultTheme } = Astro.props;
       setTheme: (theme) => { store.setItem(storageKey, theme); applyTheme(theme); },
       getTheme: () => { return store.getItem(storageKey) || defaultThemeAttr; },
       getSystemTheme,
-    }
+    };
     window.theme = manager;
     applyTheme(manager.getTheme());
     mediaMatcher.addEventListener("change", () => (manager.getTheme() == "auto" && applyTheme("auto")));

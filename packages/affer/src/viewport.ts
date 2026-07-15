@@ -1,21 +1,32 @@
-import { debounce, throttle } from "./utils";
+import { debounce, rafThrottle, throttle } from "./utils";
 
 /**
  * TODO:
- * - window.visualViewport
- * - isPortrait: boolean;
- * - orientation: "portrait" | "landscape";
- * - visualWidth: number;
- * - visualHeight: number;
- * 
- * if (window.visualViewport) window.visualViewport.addEventListener("resize", this.resizeHandler, { passive: true });
+ * - visualViewport.scroll (offsetTop/offsetLeft) for on-screen-keyboard-aware
+ *   positioning - not implemented yet, only .resize is tracked so far.
+ *
+ * RESOLVED:
+ * - window.visualViewport tracking (visualWidth/visualHeight)
+ * - isPortrait / orientation
  */
 
 export interface ViewportData {
-  readonly width:  number;
-  readonly height: number;
-  readonly aspect: number;
-  readonly dpr:    number;
+  readonly width:        number;
+  readonly height:       number;
+  readonly aspect:       number;
+  readonly dpr:          number;
+  /** window.visualViewport dimensions - reflects pinch-zoom and, on some
+   *  browsers, the on-screen keyboard. Falls back to width/height when
+   *  visualViewport isn't supported (older desktop Safari). */
+  readonly visualWidth:  number;
+  readonly visualHeight: number;
+  /** True if the viewport height is greater or equal to its width */
+  readonly isPortrait:   boolean;
+  /**
+   * Viewport orientation based on current window dimensions.
+   * Note: Unlike screen.orientation, this reflects the browser window's aspect ratio,
+   */
+  readonly orientation:  "portrait" | "landscape";
 }
 
 export interface ViewportConfig {
@@ -32,87 +43,117 @@ export interface ViewportConfig {
 
 export class ViewportClass {
 
-  private data: { width: number; height: number; aspect: number; dpr: number } = {
-    width:  0,
-    height: 0,
-    aspect: 0,
-    dpr:    1,
+  private data: {
+    width:        number;
+    height:       number;
+    aspect:       number;
+    dpr:          number;
+    visualWidth:  number;
+    visualHeight: number;
+    isPortrait:   boolean;
+    orientation:  "portrait" | "landscape";
+  } = {
+    width:        0,
+    height:       0,
+    aspect:       0,
+    dpr:          1,
+    visualWidth:  0,
+    visualHeight: 0,
+    isPortrait:   false,
+    orientation:  "landscape",
   };
 
   private listeners = new Set<(data: ViewportData) => void>();
   private listenersArray: ((data: ViewportData) => void)[] = [];  
   private mediaQueryCleanups = new Set<() => void>();
   private dprCleanup:     (() => void) | null = null;
-  private resizeHandler!: () => void;
+  private resizeHandler!: (() => void) & { cancel: () => void };
 
   private currentMode: "sync" | "debounce" | "throttle" = "sync";
   private currentDelay = 150;
   private currentLimit = 100;
 
-  private isUpdateScheduled = false;
-
   constructor() {
     if (typeof window === "undefined") return;
 
     this.executeDataUpdate = this.executeDataUpdate.bind(this);
-    this.syncHandler = this.syncHandler.bind(this);
 
     this.executeDataUpdate();
     this.setupHandler("sync", this.currentDelay, this.currentLimit);
     this.setupDprWatcher();
 
-    window.addEventListener("resize", this.resizeHandler, { passive: true });
+    this.attachResizeListeners();
   }
 
   /**
    * Allows to reconfigure the viewport tracker pacing.
-   * [!note]: Not intended to be used frequently.
-   * For WebGL/Canvas it is recommended to keep "sync" mode.
+   * Returns the instance for chainability.
    */
-  public configure(options: ViewportConfig): void {
-    if (typeof window === "undefined") return;
+  public configure(options: ViewportConfig): this {
+    if (typeof window === "undefined") return this;
 
     const newMode = options.mode ?? "sync";
     const newDelay = options.debounceDelay ?? this.currentDelay;
     const newLimit = options.throttleLimit ?? this.currentLimit;
 
-    /** TODO: possible executeDataUpdate ghost
-     * resizeHandler.cancel();
-     * if the mode change in the middle of a resize (e.g. from debounce to sync)
-     * the original debounce method may still have a pending setTimeout
-     */
     if (newMode !== this.currentMode || newDelay !== this.currentDelay || newLimit !== this.currentLimit) {
-      window.removeEventListener("resize", this.resizeHandler);
+      this.detachResizeListeners();
       this.setupHandler(newMode, newDelay, newLimit);
-      window.addEventListener("resize", this.resizeHandler, { passive: true });
+      this.attachResizeListeners();
     }
+
+    return this;
   }
 
   private setupHandler(mode: "sync" | "debounce" | "throttle", delay: number, limit: number): void {
+    if (this.resizeHandler) this.resizeHandler.cancel();
+
     this.currentMode = mode;
     this.currentDelay = delay;
     this.currentLimit = limit;
+
     if      (mode === "debounce") this.resizeHandler = debounce(this.executeDataUpdate, delay);
     else if (mode === "throttle") this.resizeHandler = throttle(this.executeDataUpdate, limit);
-    else                          this.resizeHandler = this.syncHandler;
+    else                          this.resizeHandler = rafThrottle(this.executeDataUpdate);
   }
 
-  private syncHandler(): void {
-    if (!this.isUpdateScheduled) {
-      this.isUpdateScheduled = true;
-      requestAnimationFrame(this.executeDataUpdate);
-    }
+  /**
+   * Attaches both `window.resize` and `visualViewport.resize` (when supported)
+   * to the SAME `resizeHandler` reference, so pinch-zoom / keyboard-driven
+   * visual viewport changes respect the same pacing mode as regular resizes.
+   */
+  private attachResizeListeners(): void {
+    window.addEventListener("resize", this.resizeHandler, { passive: true });
+    window.visualViewport?.addEventListener("resize", this.resizeHandler, { passive: true });
+  }
+
+  /**
+   * Must be called with the SAME resizeHandler reference that was attached -
+   * always pair with attachResizeListeners(), never call detach after
+   * resizeHandler has already been reassigned by setupHandler().
+   */
+  private detachResizeListeners(): void {
+    window.removeEventListener("resize", this.resizeHandler);
+    window.visualViewport?.removeEventListener("resize", this.resizeHandler);
+  }
+
+  private getOrientation(): "portrait" | "landscape" {
+    return this.data.height >= this.data.width ? "portrait" : "landscape";
   }
 
   private executeDataUpdate(): void {
     if (typeof window === "undefined") return;
 
-    this.isUpdateScheduled = false;
-
     this.data.width = window.innerWidth;
     this.data.height = window.innerHeight;
     this.data.aspect = this.data.width / (this.data.height || 1);
     this.data.dpr = window.devicePixelRatio || 1;
+
+    this.data.visualWidth = window.visualViewport?.width ?? this.data.width;
+    this.data.visualHeight = window.visualViewport?.height ?? this.data.height;
+
+    this.data.orientation = this.getOrientation();
+    this.data.isPortrait = this.data.orientation === "portrait";
 
     const len = this.listenersArray.length;
     for (let i = 0; i < len; i++) {
@@ -132,7 +173,8 @@ export class ViewportClass {
     if (typeof window === "undefined") return;
     if (this.dprCleanup) this.dprCleanup();
 
-    const mq = window.matchMedia(`(resolution: ${this.dpr}dppx)`);
+    const safeDpr = Math.round(this.dpr * 1000) / 1000;
+    const mq = window.matchMedia(`(resolution: ${safeDpr}dppx)`);
     const handler = () => {
       const newDpr = window.devicePixelRatio || 1;
       if (newDpr !== this.data.dpr) {
@@ -154,18 +196,25 @@ export class ViewportClass {
   public get height() { return this.data.height; }
   public get aspect() { return this.data.aspect; }
   public get dpr() { return this.data.dpr; }
+  public get visualWidth() { return this.data.visualWidth; }
+  public get visualHeight() { return this.data.visualHeight; }
+  public get isPortrait() { return this.data.isPortrait; }
+  public get orientation() { return this.data.orientation; }
 
-  /** Retrieves a read-only snapshot of the current viewport state */
+  /** Retrieves a read-only live snapshot of the current viewport state */
   public get state(): ViewportData { return this.data; }
 
   /**
    * Registers a resize listener callback. Immediately fires once with current data.
+   * @returns A dispose function to easily unregister the listener.
    */
-  public addListener(callback: (data: ViewportData) => void): void {
-    if (this.listeners.has(callback)) return;
-    this.listeners.add(callback);
-    this.listenersArray = Array.from(this.listeners);
+  public addListener(callback: (data: ViewportData) => void): () => void {
+    if (!this.listeners.has(callback)) {
+      this.listeners.add(callback);
+      this.listenersArray = Array.from(this.listeners);
+    }
     callback(this.data);
+    return () => this.removeListener(callback);
   }
 
   /**
@@ -188,7 +237,7 @@ export class ViewportClass {
     canvas: HTMLCanvasElement,
     customWidth?: number,
     customHeight?: number,
-  ): { width: number; height: number; dpr: number } {
+  ): Readonly<{ width: number; height: number; dpr: number }> {
     const displayWidth = customWidth ?? this.width;
     const displayHeight = customHeight ?? this.height;
 
@@ -222,7 +271,7 @@ export class ViewportClass {
 
   /**
    * Registers a media query listener. Automatically updates state and cleans up on destruction.
-   * Returns a function to unbind the listener manually.
+   * @returns A function to unbind the listener manually.
    */
   public matchMedia(query: string, callback: (matches: boolean) => void): () => void {
     if (typeof window === "undefined") {
@@ -259,7 +308,8 @@ export class ViewportClass {
   }
 
   public destroy(): void {
-    if (typeof window !== "undefined") window.removeEventListener("resize", this.resizeHandler);
+    if (typeof window !== "undefined") this.detachResizeListeners();
+    if (this.resizeHandler) this.resizeHandler.cancel();
     if (this.dprCleanup) (this.dprCleanup(), this.dprCleanup = null);
     this.mediaQueryCleanups.forEach(fn => fn());
     this.mediaQueryCleanups.clear();

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Affer Cluster Test</title>
+    <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #121214;
+      font-family: monospace;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+    #ui {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      color: #e1e1e6;
+      background: rgba(32, 32, 36, 0.8);
+      padding: 12px;
+      border-radius: 6px;
+      pointer-events: none;
+      border: 1px solid #29292e;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="ui">Cargando clúster...</div>
+    <canvas id="canvas"></canvas>
+  </body>
+</html>
+
+<script>
+import { Ticker, MouseTracker, WindowCluster } from "@clxd/affer";
+
+const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+const ctx = canvas.getContext("2d");
+const ui = document.getElementById("ui");
+
+// Auto-ajuste del lienzo
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+// Inicializamos trackers locales y el clúster
+const mouse = new MouseTracker({ lerpFactor: 10 });
+const cluster = new WindowCluster({ channelId: "creative-swarm" });
+cluster.bindMouseTracker(mouse);
+
+// Propiedades de la pelota en coordenadas globales (del escritorio entero)
+const ball = {
+  x:       500,
+  y:       300,
+  targetX: 500,
+  targetY: 300,
+  radius:  40,
+  easing:  0.08, // Factor de suavizado para seguir al mouse
+};
+
+// Escuchamos la posición de la pelota si somos un nodo secundario
+cluster.on("SYNC_BALL", (payload) => {
+  if (!cluster.isMain) {
+    ball.x = payload.x;
+    ball.y = payload.y;
+  }
+});
+
+// Loop principal mediante el Ticker central de Affer
+Ticker.add(() => {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 1. GESTIÓN DE FÍSICAS (Solo la ventana MAIN calcula la posición global)
+  if (cluster.isMain) {
+    // La pelota persigue la posición absoluta del mouse (esté en la ventana que esté)
+    const targetX = cluster.telemetry.mouseAbsolute.x;
+    const targetY = cluster.telemetry.mouseAbsolute.y;
+
+    // Interpolación suave hacia el objetivo
+    ball.x += targetX - ball.x;// (targetX - ball.x) * ball.easing;
+    ball.y += targetY - ball.y;// (targetY - ball.y) * ball.easing;
+
+    // Emitimos las coordenadas exactas calculadas a todo el clúster
+    cluster.emit("SYNC_BALL", { x: ball.x, y: ball.y });
+  }
+
+  // 2. TRADUCCIÓN GEOMÉTRICA (De absoluto a local)
+  // Restamos la posición de esta ventana en el escritorio para obtener la coordenada local
+  const localX = ball.x - window.screenX;
+  const localY = ball.y - window.screenY;
+
+  // 3. RENDERIZADO
+  // Dibujamos una cuadrícula de referencia para notar el espacio físico
+  ctx.strokeStyle = "#29292e";
+  ctx.lineWidth = 1;
+  for (let i = 0; i < canvas.width; i += 40) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+  }
+  for (let j = 0; j < canvas.height; j += 40) {
+    ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+  }
+
+  // Dibujamos la pelota física
+  ctx.beginPath();
+  ctx.arc(localX, localY, ball.radius, 0, Math.PI * 2);
+  // Color distintivo: Verde para la líder (Main), Magenta para las esclavas
+  ctx.fillStyle = cluster.isMain ? "#00ffcc" : "#ff0055";
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = ctx.fillStyle;
+  ctx.fill();
+  ctx.closePath();
+  ctx.shadowBlur = 0; // Limpiar sombra para optimizar
+
+  // 4. TELEMETRÍA EN PANTALLA
+  ui!.innerHTML = `
+    <strong>ID Ventana:</strong> ${cluster.id}<br>
+    <strong>Rol:</strong> ${cluster.isMain ? "👑 MAIN (Calcula física)" : "🔗 REMOTE"}<br>
+    <strong>Index Jerárquico:</strong> ${cluster.index}<br>
+    <strong>Pelota Global:</strong> X: ${Math.round(ball.x)}, Y: ${Math.round(ball.y)}<br>
+    <strong>Pelota Local Canvas:</strong> X: ${Math.round(localX)}, Y: ${Math.round(localY)}
+  `;
+});
+</script>

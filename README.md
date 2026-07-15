@@ -1,86 +1,57 @@
-# Affer.js 🌀
+# Affer 🧠
 
-> **Headless browser trackers.**
+> **A deterministic browser perception ecosystem for real-time web applications.**
 >
-> Get browser data, not UI.
+> *Perceive the browser as a continuous world, not a stream of events.*
 
-Affer.js is a framework-agnostic ecosystem of browser trackers that collect, normalize, synchronize, and expose browser data through a consistent API.
+Affer is an ecosystem of headless browser perception modules that transform asynchronous browser events into continuously readable state.
 
-Instead of implementing dozens of event listeners, state managers, and animation loops, Affer provides reusable trackers that work together under a shared update cycle.
+Affer provides reusable trackers that synchronize browser information under a shared update cycle, making interaction logic deterministic, composable, and framework agnostic.
 
-**Current version:** `0.0.0-alpha.0`
-
-> This is an early alpha release. APIs may change while the project evolves.
-
----
-
-## What is Affer?
-
-Affer is not a UI library.
-
-It doesn't render components nor animate anything.
-
-It answers one question:
-
-> **"Where does the data come from?"**
-
-Mouse position.
-Keyboard state.
-Scroll progress.
-Viewport information.
-Touch gestures.
-Multiple browser windows.
-
-Affer keeps these values updated and ready to use so you can focus on building interactions instead of implementing infrastructure.
+> This repository contains the source code for the Affer ecosystem.
 
 ---
 
 ## Philosophy
 
-Every module follows the same principles:
+Modern interactive applications update every frame.
 
-- Headless (no UI, no CSS)
-- Framework agnostic
-- Tree-shakeable
-- Real-time updates
-- Shared architecture
-- Consistent APIs
-- Optional modules
+Browsers, however, communicate through asynchronous events.
 
-Every tracker:
+Affer bridges that gap by exposing browser information as continuous state that can be queried whenever your application updates.
 
-- has state
-- exposes `update()`
-- can run inside a ticker
-- can run inside your own loop
-- can be combined with other trackers
+Instead of asking:
+
+> *"Did a mousemove event happen?"*
+
+you ask:
+
+> *"Where is the pointer right now?"*
+
+This philosophy applies consistently across every perception module.
 
 ---
 
-## Packages
+## Repository
+
+This repository is organized as a pnpm workspace.
 
 ```text
-packages/
-└── core        → npm package
-
 apps/
-└── docs        → documentation website
+└── docs/           Documentation website
+
+packages/
+└── affer/          Main npm package
+
 ```
 
----
+Current package:
 
-## Repository Structure
+| Package | Description |
+|----------|-------------|
+| `@clxd/affer` | Core browser perception library |
 
-```text
-affer/
-├── apps/
-│   └── docs/
-├── packages/
-│   └── core/
-├── package.json
-├── pnpm-workspace.yaml
-└── README.md
-```
+Additional packages may be added as the ecosystem evolves.
 
 ---
 
@@ -92,7 +63,7 @@ Install dependencies:
 pnpm install
 ```
 
-Run documentation locally:
+Start the documentation website:
 
 ```bash
 pnpm dev
@@ -120,12 +91,22 @@ pnpm build:docs
 
 ## Documentation
 
-Documentation and examples are available at:
+Complete documentation, API reference, architecture guides, and interactive examples are available at:
 
-https://affer.clxd.dev
+**https://affer.clxd.dev**
+
+---
+
+## Project Status
+
+Affer is currently in **early alpha**.
+
+The public API is still evolving and breaking changes may occur before the first stable release.
+
+Feedback and experimentation are welcome.
 
 ---
 
 ## License
 
-MIT
+MIT © clxd.dev

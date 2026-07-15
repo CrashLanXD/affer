@@ -17,7 +17,8 @@
   --color-p-orange: #ff8200;
   --color-p-red: #ef3827;
 
-  --color-p: hsl(275 80% 70%);
+  /* --color-p: hsl(275 80% 70%); */
+  --color-p: hsl(120 80% 70%);
   
   --color-light: #e5e4d1;
   --color-dark: light-dark(#343232, #111111);
@@ -28,7 +29,7 @@
   --color-r-orange: #dc6d2c;
   --color-r-yellow: #ddb631;
   
-  --color-primary: hsl(var(--hue) 80% 70%);
+  /* --color-primary: hsl(var(--hue) 80% 70%); */
 
   --font-sans: 'Geist Sans', ui-sans-serif. system-ui, sans-serif;
   --font-mono: "Geist mono", ui-monospace, monospace;
@@ -38,7 +39,7 @@
   --font-pixel-triangle: "Geist Pixel Triangle";
   --font-pixel-line: "Geist Pixel Line";
   
-  --animate-hue-rotation: hue-rotation 30s linear infinite;
+  /* --animate-hue-rotation: hue-rotation 30s linear infinite; */
 
   --text-f-base-min: 14;
   --text-f-base-max: 20;
@@ -46,14 +47,14 @@
   --text-f-ratio-max: 1.33;
   --text-f-width-min: 375;
   --text-f-width-max: 1500;
-
+/* 
   @keyframes hue-rotation {
     from { --hue: 0; }
     to { --hue: 360; }
-  }
+  } */
 }
 
-@property --hue {
+/* @property --hue {
   syntax: '<number>';
   inherits: true;
   initial-value: 70;
@@ -63,7 +64,7 @@
   syntax: '<color>';
   inherits: true;
   initial-value: hsl(var(--hue) 80% 70%);
-}
+} */
 
 @property --_h {
   syntax: '<length>';
@@ -87,8 +88,8 @@
 
   html {
     @apply scroll-smooth;
-    @apply animate-hue-rotation bg-primary selection:bg-primary;
     scrollbar-width: thin;
+    /* @apply bg-primary selection:bg-primary; */
     /* scrollbar-color: var(--color-primary) light-dark(var(--color-neutral-100), var(--color-neutral-900)); */
   }
 
@@ -166,8 +167,8 @@
   }
 }
 
-@utility fluid-base-min  { --text-f-base-min: --value(number); }
-@utility fluid-base-max  { --text-f-base-max: --value(number); }
+@utility fluid-base-min  { --text-f-base-min:  --value(number); }
+@utility fluid-base-max  { --text-f-base-max:  --value(number); }
 @utility fluid-ratio-min { --text-f-ratio-min: --value(number); }
 @utility fluid-ratio-max { --text-f-ratio-max: --value(number); }
 @utility fluid-width-min { --text-f-width-min: --value(number); }

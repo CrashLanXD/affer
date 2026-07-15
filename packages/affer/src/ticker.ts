@@ -1,14 +1,14 @@
 export interface TickData {
   /** Time elapsed since last frame in milliseconds */
-  deltaTime:   number;
+  readonly deltaTime:   number;
   /** Total elapsed time since the Ticker started in milliseconds */
-  elapsedTime: number;
+  readonly elapsedTime: number;
   /** processed frames */
-  frame:       number;
+  readonly frame:       number;
   /** Time elapsed in seconds */
-  time:        number;
+  readonly time:        number;
   /** physics multiplier. 1 = 60fps, 0.5 = 120fps, 2 = 30fps */
-  deltaRatio:  number;
+  readonly deltaRatio:  number;
 }
 
 export type TickCallback = (data: TickData) => void;
@@ -20,13 +20,28 @@ interface ListenerMeta {
   toRemove: boolean;
 }
 
+export interface TickerAddOptions {
+  /** Higher priority listeners are executed first. Default: 0 */
+  priority?: number;
+  /** Whether the listener should be removed after its first execution. Default: false */
+  once?:     boolean;
+}
+
 class TickerClass {
 
   private listeners = new Map<TickCallback, ListenerMeta>();
   private listenersArray: ListenerMeta[] = [];
 
-  private tickData: TickData = { deltaTime: 0, elapsedTime: 0, frame: 0, time: 0, deltaRatio: 1 };
-  private rafId:    number | null = null;
+  // private tickData: TickData = { deltaTime: 0, elapsedTime: 0, frame: 0, time: 0, deltaRatio: 1 };
+  private tickData: {
+    deltaTime:   number;
+    elapsedTime: number;
+    frame:       number;
+    time:        number;
+    deltaRatio:  number;
+  } = { deltaTime: 0, elapsedTime: 0, frame: 0, time: 0, deltaRatio: 1 };
+
+  private rafId: number | null = null;
   private lastTime = 0;
   private elapsedTime = 0;
 
@@ -43,13 +58,14 @@ class TickerClass {
   constructor() { this.tick = this.tick.bind(this); }
 
   /**
-   * Adds a callback to the central frame loop.
-   * Automatically starts the loop if it wasn't running, unless it was manually paused.
-   * @param callback The callback to add.
-   * @param priority The priority of the callback. Higher priority callbacks are executed first. Default: 0.
-   * @param once Whether the callback should be removed after the first execution. Default: false.
+   * Adds a listener to the central update cycle.
+   * Automatically starts the execution loop if it was inactive and not manually paused.
+   * @returns A dispose function to unregister the listener.
    */
-  public add(callback: TickCallback, priority = 0, once = false): void {
+  public add(callback: TickCallback, options?: TickerAddOptions): () => void {
+    const priority = options?.priority ?? 0;
+    const once = options?.once ?? false;
+
     if (this.listeners.has(callback)) {
       const existing = this.listeners.get(callback)!;
       existing.priority = priority;
@@ -59,13 +75,16 @@ class TickerClass {
 
     this.rebuildListenersArray();
     if (!this.isRunning && !this._paused) this.start();
+
+    return () => this.remove(callback);
   }
 
   /**
-   * Add a listener that will only be called once.
+   * Registers a listener that will execute exactly once during the next frame step.
+   * @returns A dispose function to unregister the listener before execution.
    */
-  public once(callback: TickCallback, priority = 0): void { // Syntactic sugar
-    this.add(callback, priority, true);
+  public once(callback: TickCallback, priority = 0): () => void { // Syntactic sugar
+    return this.add(callback, { priority, once: true });
   }
 
   /**
@@ -86,7 +105,7 @@ class TickerClass {
   }
 
   /**
-   * 
+   * Adjusts maximum allowed frame jumps to prevent timing spikes during heavy processor lag.
    * @param threshold Milliseconds of lag before adjusting the physics multiplier. 0 to disable.
    * @param adjustedLag The value (ms) to which the deltaTime will be reduced if threshold is exceeded.
    */
@@ -208,7 +227,7 @@ class TickerClass {
   public get listenerCount(): number { return this.listeners.size; }
 
   /**
-   * Utility for development to monitor internal engine metrics.
+   * Development helper to monitor internal engine metrics.
    */
   public get stats() {
     const currentFps = this.tickData.deltaTime > 0 ? Math.round(1000 / this.tickData.deltaTime) : 0;

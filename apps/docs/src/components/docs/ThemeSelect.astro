@@ -11,8 +11,8 @@ import { Icon } from "@astrojs/starlight/components";
       { label: Astro.locals.t("themeSelect.auto"), selected: true, value: "auto" },
       { label: Astro.locals.t("themeSelect.light"), selected: false, value: "light" },
       { label: Astro.locals.t("themeSelect.dark"), selected: false, value: "dark" },
-      { label: "Omaha", selected: false, value: "omaha" },
-      { label: "Webrings!", selected: false, value: "webrings" },
+      // { label: "Omaha", selected: false, value: "omaha" },
+      // { label: "Webrings!", selected: false, value: "webrings" },
     ]}
     width="6.25em"
   />
@@ -28,6 +28,7 @@ import { Icon } from "@astrojs/starlight/components";
 
 <script>
   class ThemeSelector extends HTMLElement {
+
     private _cleanup: (() => void) | null = null;
 
     connectedCallback() {
@@ -37,7 +38,7 @@ import { Icon } from "@astrojs/starlight/components";
       select.value = window.theme.getTheme();
       this.updateIcon(select.value);
 
-      const handleSelectChange = () => { window.theme.setTheme(select.value) };
+      const handleSelectChange = () => { window.theme.setTheme(select.value); };
       select.addEventListener("change", handleSelectChange);
 
       const handleGlobalThemeChange = (e: Event) => {
@@ -69,6 +70,7 @@ import { Icon } from "@astrojs/starlight/components";
         }
       }
     }
+    
   }
 
   if (!customElements.get("starlight-theme-select")) {

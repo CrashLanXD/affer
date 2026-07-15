@@ -1,0 +1,86 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <pre id="debug"></pre>
+</Layout>
+
+<script>
+import { Ticker, MouseTracker, Viewport, type TickData } from "@clxd/affer";
+
+// 1. Inicializamos el MouseTracker
+const mouse = new MouseTracker({
+  lerpFactor: 6,      // Velocidad de suavizado (más bajo = más elástico/lento)
+  trackTouch: true,    // Habilita soporte para móviles y tablets
+});
+
+// Opcional: Cambiar los FPS objetivos del Ticker para probar la limitación
+// Ticker.fps(60); // Descomenta para limitar a 60fps. Por defecto es 0 (ilimitado/rAF nativo)
+
+// Seleccionamos el contenedor en el DOM donde inyectaremos la telemetría
+const debugContainer = document.getElementById("debug");
+
+// 2. Creamos el bucle de renderizado acoplado al Ticker central
+function tick(_tickData: TickData) {
+  // Recopilamos absolutamente TODOS los datos disponibles en la API de la librería
+  const telemetry = {
+    // === MOTOR CENTRAL (TICKER) ===
+    ticker: {
+      isActive:           Ticker.isActive,
+      isPaused:           Ticker.isPaused,
+      frameActual:        Ticker.frame,
+      tiempoTranscurrido: `${Ticker.time.toFixed(2)}s`,
+      // Estadísticas internas calculadas por el paquete
+      ...Ticker.stats, 
+    },
+
+    // === ENTRACTO DE VENTANA (VIEWPORT) ===
+    viewport: {
+      ancho:           Viewport.width,
+      alto:            Viewport.height,
+      relacionAspecto: Viewport.aspect.toFixed(3),
+      pixelRatio_DPR:  Viewport.dpr,
+      estadoCopia:     Viewport.state, // Snapshot de lectura rápida
+    },
+
+    // === DETECTOR DE MOUSE Y GESTOS (MOUSE TRACKER) ===
+    mouse: {
+      dispositivoActivo:    mouse.inputType,
+      estaDentroDePantalla: mouse.isInside,
+      estaHaciendoClick:    mouse.isPressed,
+      
+      // Coordenadas en Pixeles Reales
+      pixeles:           mouse.px,
+      pixelesSuavizados: { x: Math.round(mouse.lerpPx.x), y: Math.round(mouse.lerpPx.y) },
+      
+      // Coordenadas Normalizadas [0 a 1] (Utiles para CSS/DOM)
+      normalizadas:           mouse.normalized,
+      normalizadasSuavizadas: mouse.lerpNormalized,
+      
+      // Coordenadas Centradas [-1 a 1] (Ideales para WebGL/Three.js)
+      centradas:           mouse.centered,
+      centradasSuavizadas: mouse.lerpCentered,
+      
+      // Dinámicas de movimiento
+      velocidad_px_por_segundo: Math.round(mouse.velocity),
+      angulo_radianes:          mouse.angle.toFixed(4),
+      direccionCalculada:       mouse.direction,
+      
+      // Sistema Analítico de Clicks de v1.0.0
+      clicksPorSegundo:     mouse.clicksPerSecond,
+      rachaDeClicksRapidos: mouse.clickStreak,
+      ultimoBotonClickado:  mouse.lastClickType,
+    },
+  };
+
+  // 3. Pintamos el objeto completo formateado en el DOM
+  if (debugContainer) {
+    debugContainer.textContent = JSON.stringify(telemetry, null, 2);
+  }
+}
+
+// 4. Suscribimos nuestra función al Ticker. 
+// A partir de aquí, el Ticker se enciende automáticamente al detectar un listener.
+Ticker.add(tick);
+</script>

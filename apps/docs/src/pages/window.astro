@@ -1,0 +1,75 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <pre id="debug"></pre>
+</Layout>
+
+<script>
+import { Ticker, MouseTracker, Viewport, WindowCluster } from "@clxd/affer";
+
+// 1. Inicializamos el rastreador de mouse (cumple con la interfaz MinimalMouseTracker)
+const mouse = new MouseTracker({ lerpFactor: 10 });
+
+// 2. Instanciamos el clúster con la configuración exacta requerida
+const cluster = new WindowCluster({
+  channelId:     "creative-canvas",
+  calibration:   { offsetX: 0, offsetY: 0 },
+  // Callback nativo cuando esta ventana se convierte en la principal (la más antigua)
+  onMainClaimed: () => {
+    console.log("👑 ¡Reclamado! Esta ventana es ahora el nodo MAIN (Líder).");
+    document.body.style.borderColor = "#00ffcc"; // Feedback visual
+  },
+});
+
+// 3. Vinculamos el MouseTracker local
+cluster.bindMouseTracker(mouse);
+
+// 4. Escuchamos un mensaje customizado
+// El método .on() nos devuelve directamente la función de desuscripción (cleanup)
+const _unbindExplosion = cluster.on("EXPLOSION", (payload, senderId) => {
+  console.log(`💥 Evento "EXPLOSION" originado en la pestaña [${senderId}]:`, payload);
+});
+
+// Selector DOM para ver la telemetría
+const debugContainer = document.getElementById("debug");
+
+// 5. Renderizado en el Ticker central
+Ticker.add(() => {
+  // Leemos directamente del objeto de telemetría de la clase
+  const data = {
+    local: {
+      miId:               cluster.id,
+      miIndex:            cluster.index,
+      soyElMain:          cluster.isMain,
+      creadoEn:           cluster.createdAt,
+      dimensionesLocales: {
+        screenX: window.screenX,
+        screenY: window.screenY,
+        width:   Viewport.width,
+        height:  Viewport.height,
+      },
+    },
+    clusterGlobal: {
+      mouseAbsoluto:           cluster.telemetry.mouseAbsolute,
+      ventanasActivas:         cluster.telemetry.windows, // Lista ordenada por antigüedad
+      distanciasEntreVentanas: cluster.telemetry.distances, // Distancia euclidiana en px
+    },
+  };
+
+  if (debugContainer) {
+    debugContainer.textContent = JSON.stringify(data, null, 2);
+  }
+});
+
+// 6. Emitir mensaje personalizado al hacer click
+window.addEventListener("click", (e) => {
+  // Emitimos usando la firma real de la clase (.emit)
+  cluster.emit("EXPLOSION", {
+    localX: e.clientX,
+    localY: e.clientY,
+    fuerza: Math.random() * 100,
+  });
+});
+</script>

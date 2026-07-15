@@ -20,9 +20,9 @@ declare global {
      * Fires when the theme is changed.
      */
     "theme-changed": CustomEvent<{
-      theme: Theme;                  // The configured theme (can be "auto")
-      systemTheme: "light" | "dark"; // The system theme
-      defaultTheme: Theme;           // The component's default theme
+      theme:         Theme;                  // The configured theme (can be "auto")
+      systemTheme:   "light" | "dark"; // The system theme
+      defaultTheme:  Theme;           // The component's default theme
       resolvedTheme: ResolvedTheme;  // The applied theme (will never be "auto")
     }>;
   }

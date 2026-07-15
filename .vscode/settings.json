@@ -4,11 +4,16 @@
     "source.fixAll.eslint": "always"
   },
 
+  "eslint.workingDirectories": [
+    { "mode": "auto" }
+  ],
+
   "eslint.validate": [
     "javascript",
     "javascriptreact",
     "typescript",
-    "typescriptreact"
+    "typescriptreact",
+    "astro"
   ],
 
   "eslint.useFlatConfig": true

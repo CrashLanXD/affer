@@ -225,7 +225,7 @@ export class VirtualJoystick {
 
     this.isDragging = false;
     this.pointerId = null;
-    try { this.baseEl.releasePointerCapture(e.pointerId); } catch {}
+    try { this.baseEl.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
 
     // Controlled kinematic return to original mechanical center
     this.stickEl.style.transform = "translate3d(0px, 0px, 0)";

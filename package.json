@@ -1,27 +1,28 @@
 {
   "name": "affer-monorepo",
   "private": true,
+  "type": "module",
   "version": "0.0.0",
   "scripts": {
+    "dev": "pnpm --filter docs --filter @clxd/affer --parallel dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
+    "typecheck": "pnpm -r typecheck",
     "dev:core": "pnpm --filter @clxd/affer dev",
     "build:core": "pnpm --filter @clxd/affer build",
     "dev:docs": "pnpm --filter docs dev",
     "build:docs": "pnpm --filter docs build",
-    "dev": "pnpm --parallel dev",
-    "build": "pnpm build:core && pnpm build:docs",
     "deploy": "pnpm build && pnpm --filter docs exec wrangler deploy"
   },
-  "overrides": {
-    "vite": "^7.2.0"
-  },
   "devDependencies": {
-    "wrangler": "^4.95.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp",
-      "esbuild",
-      "workerd"
-    ]
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "astro-eslint-parser": "^3.0.0",
+    "eslint": "^10.7.0",
+    "eslint-plugin-astro": "^3.0.0",
+    "globals": "^17.7.0",
+    "typescript-eslint": "^8.63.0",
+    "wrangler": "^4.110.0"
   }
 }

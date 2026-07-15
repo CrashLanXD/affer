@@ -1,17 +1,17 @@
 ---
-import '@/styles/global.css';
-import '@/styles/animations.css';
-import { ClientRouter } from 'astro:transitions';
-import SEO from '@/components/SEO.astro';
+import "@/styles/global.css";
+import "@/styles/animations.css";
+import { ClientRouter } from "astro:transitions";
+import SEO from "@/components/SEO.astro";
 
-import ThemeManager from '@/components/ThemeManager.astro';
-import Nav from '@/components/Nav.astro';
+import ThemeManager from "@/components/ThemeManager.astro";
+import Nav from "@/components/Nav.astro";
 
 interface Props {
-	title?: string;
-	description?: string;
-	robots?: string;
-	loadArt?: boolean;
+  title?:       string;
+  description?: string;
+  robots?:      string;
+  loadArt?:     boolean;
 }
 
 const { title, description, robots, loadArt = true } = Astro.props;
@@ -19,20 +19,20 @@ const { title, description, robots, loadArt = true } = Astro.props;
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<SEO title={title} description={description} robots={robots} />
-		<meta name="theme-color" content="#ffffff" />
-		<ThemeManager defaultTheme="auto" />
-		<ClientRouter />
-		{loadArt && <script src="@/core/math-art-init.ts"></script>}
-	</head>
-	<body>
-		<script>
-      import { startMouseTracking, stopMouseTracking } from '@/stores/input-store';
-      document.addEventListener('astro:page-load', startMouseTracking);
-      document.addEventListener('astro:before-preparation', stopMouseTracking);
+  <head>
+    <SEO title={title} description={description} robots={robots} />
+    <meta name="theme-color" content="#ffffff" />
+    <ThemeManager defaultTheme="auto" />
+    <ClientRouter />
+    {loadArt && <script src="@/core/math-art-init.ts"></script>}
+  </head>
+  <body>
+    <script>
+      import { startMouseTracking, stopMouseTracking } from "@/stores/input-store";
+      document.addEventListener("astro:page-load", startMouseTracking);
+      document.addEventListener("astro:before-preparation", stopMouseTracking);
     </script>
-		<Nav />
-		<slot />
-	</body>
+    <Nav />
+    <slot />
+  </body>
 </html>

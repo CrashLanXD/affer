@@ -16,21 +16,11 @@ export type { ViewportData, ViewportConfig } from "./viewport";
 export { TouchTracker } from "./touch";
 export type { SwipeData, PinchData, TouchTrackerOptions } from "./touch";
 
+export { WindowCluster } from "./window-cluster";
+export type { WindowState, ClusterTelemetry } from "./window-cluster";
+
 export { VirtualJoystick } from "./joystick";
 export type { JoystickData, JoystickOptions } from "./joystick";
 
-export {
-  clamp,
-  lerp,
-  lerpContextual,
-  mapRange,
-  debounce,
-  throttle,
-  dist,
-  distSq,
-  angle,
-  wrap,
-  normalize,
-} from "./utils"; // Just export * bro 😅
-
-export { createTickerBundle } from "./helpers";
+export * from "./utils";
+export * from "./helpers";

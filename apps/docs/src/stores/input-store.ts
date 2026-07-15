@@ -5,7 +5,7 @@ export const $mouse = atom<MouseTracker | null>(null);
 let instance: MouseTracker | null = null;
 
 export function startMouseTracking() {
-  if (typeof window === 'undefined' || instance) return;
+  if (typeof window === "undefined" || instance) return;
 
   instance = new MouseTracker({
     lerpFactor: 10,

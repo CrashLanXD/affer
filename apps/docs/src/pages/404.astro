@@ -1,5 +1,5 @@
 ---
-import Welcome from "../components/Welcome.astro";
+// import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
@@ -10,7 +10,7 @@ import Layout from "../layouts/Layout.astro";
       <p class="font-mono text-center text-lg -mt-4">That's not a valid URL, silly!</p>
     </div>
     <div class="w-full mb-0 h-full absolute bottom-0 mix-blend-exclusion sl:mix-blend-difference">
-      <canvas id="art" class="art w-full opacity-0"
+      <canvas id="art-404" class="art w-full opacity-0"
         data-config='{"slices":1,"effectType":"none","isMouseLocked":true,"fitParent":true}'
       ></canvas>
     </div>
@@ -43,12 +43,12 @@ import Layout from "../layouts/Layout.astro";
   import { Ticker, lerp } from "@clxd/affer";
   import { $mouse } from "@/stores/input-store";
 
-  const CONFIG = {"count":3443,"size":20,"sides":5,"shape":"line","scale":63.79999923706055,"velocity":0.1,"freq":1,"twist":0,"twirl":0,"lump":0,"noise":0,"orientation":0,"curl":0,"baseAmp":80,"ampX":1,"ampY":4.400000095367432,"zoom":0.4000000059604645,"top":0,"left":0,"axis":"x","aspectRatio":1.899999976158142,"effectType":"none","slices":1,"isLineart":false,"isBalls":false,"isMatrix":false,"isSpiral":true,"isDial":true,"mouseX":0.9762997031211853,"mouseY":0.6882352828979492,"scaleMode":"contain","canvasRatio":null,"fitParent":true,"isMouseLocked":true}
+  const CONFIG = { "count": 3443,"size": 20,"sides": 5,"shape": "line","scale": 63.79999923706055,"velocity": 0.1,"freq": 1,"twist": 0,"twirl": 0,"lump": 0,"noise": 0,"orientation": 0,"curl": 0,"baseAmp": 80,"ampX": 1,"ampY": 4.400000095367432,"zoom": 0.4000000059604645,"top": 0,"left": 0,"axis": "x","aspectRatio": 1.899999976158142,"effectType": "none","slices": 1,"isLineart": false,"isBalls": false,"isMatrix": false,"isSpiral": true,"isDial": true,"mouseX": 0.9762997031211853,"mouseY": 0.6882352828979492,"scaleMode": "contain","canvasRatio": null,"fitParent": true,"isMouseLocked": true };
 
   let heroInstance: AbortController | null = null;
 
   document.addEventListener("astro:page-load", () => {
-    const canvas = document.querySelector("#art") as MathArtCanvas | null;
+    const canvas = document.querySelector("#art-404") as MathArtCanvas | null;
     if (!canvas) return;
 
     if (heroInstance) heroInstance.abort();
@@ -114,7 +114,7 @@ import Layout from "../layouts/Layout.astro";
 
     Ticker.add(tick);
 
-    signal.addEventListener('abort', () => {
+    signal.addEventListener("abort", () => {
       Ticker.remove(tick);
     });
   });

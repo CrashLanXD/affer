@@ -10,7 +10,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
@@ -21,14 +22,10 @@
     "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^5.10.0",
-    "@types/node": "^25.9.1",
-    "eslint": "^10.4.0",
-    "globals": "^17.6.0",
+    "@types/node": "^25.9.5",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.0",
-    "vite": "^7.2.0",
-    "vite-plugin-dts": "^5.0.1"
+    "vite": "^8.1.4",
+    "vite-plugin-dts": "^5.0.3"
   },
   "files": [
     "dist",
@@ -36,14 +33,21 @@
     "README.md"
   ],
   "keywords": [
+    "affer",
     "framerate",
     "input",
     "tracker",
+    "sensor",
     "ticker",
     "mouse",
     "creative-coding",
     "viewport"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CrashLanXD/affer"
+  },
+  "homepage": "https://affer.clxd.dev",
   "license": "MIT",
   "author": "CLXD"
 }

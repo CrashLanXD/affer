@@ -1,4 +1,5 @@
 export class SeededRandom {
+
   private seed: number;
 
   constructor(seed: number) {
@@ -45,4 +46,5 @@ export class SeededRandom {
   setSeed(seed: number): void {
     this.seed = seed >>> 0;
   }
+
 }

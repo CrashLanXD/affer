@@ -1,24 +1,10 @@
-import globals from "globals";
-import tseslint from "typescript-eslint";
 import stylistic from "@stylistic/eslint-plugin";
 
-export default tseslint.config(
+export default [
   {
-    ignores: ["node_modules", "dist", "build", ".astro", "out", "target"],
-  },
-  ...tseslint.configs.recommended,
-  {
-    files:           ["**/*.{js,mjs,cjs,ts,mts,cts}"],
-    languageOptions: {
-      globals:       { ...globals.browser, ...globals.node, ...globals.es2021 },
-      parser:        tseslint.parser,
-      parserOptions: {
-        project: false,
-        program: null,
-      },
-    },
     plugins: { "@stylistic": stylistic },
-    rules:   {
+    
+    rules: {
       "no-unused-vars":                    "off",
       "@typescript-eslint/no-unused-vars": ["warn", {
         "argsIgnorePattern": "^_",
@@ -71,4 +57,4 @@ export default tseslint.config(
       }],
     },
   },
-);
+];

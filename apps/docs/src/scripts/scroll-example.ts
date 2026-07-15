@@ -1,11 +1,11 @@
-import { ScrollSection } from '@/core/scroll';
+import { ScrollSection } from "@clxd/affer";
 
 document.addEventListener("astro:page-load", () => {
   const footer = document.querySelector("footer");
   if (!footer) return;
 
   const footerTracker = new ScrollSection({
-    element: footer,
+    element:  footer,
     onUpdate: (section) => {
       // Estos logs corren bajo el Ticker, pero con RENDIMIENTO MÁXIMO (0 DOM reads)
       console.log("--- TELEMETRÍA FOOTER ---");
@@ -20,7 +20,7 @@ document.addEventListener("astro:page-load", () => {
       console.log("Top Suavizado (LERP):", section.lerpTopViewport);
       
       console.log("Progreso de visibilidad (0 a 1):", section.lerpProgress);
-    }
+    },
   });
 
   // Limpieza al cambiar de ruta en Astro
