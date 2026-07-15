@@ -43,6 +43,7 @@ export default defineConfig({
       disable404Route: true,
       customCss:       [
         "@/styles/global.css",
+        "@/styles/docs/base.css",
         "@/styles/docs/custom.css",
         "@/styles/docs/themes.css",
       ],
