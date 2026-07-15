@@ -9,9 +9,25 @@ import SpeedFollower from "../components/SpeedFollower.astro";
   <SpeedFollower />
   <Welcome />
   <div class="w-full flex justify-center items-center relative h-dvh">
-    <div class="container font-pixel-square animate-fade-in mx-auto">
-      <h1 class="text-fluid">affer<span class="text-p">.js</span></h1>
-      <p class="font-mono text-center text-base -mt-1">A deterministic browser perception layer for real-time web applications.</p>
+    <div class="container font-pixel-square animate-fade-in mx-auto z-10 flex flex-col items-center">
+      <h1 class="text-fluid select-none">affer<span class="text-p">.js</span></h1>
+      <p class="font-mono text-center text-base -mt-1 text-zinc-300">A deterministic browser perception layer for real-time web applications.</p>
+      
+      <div class="flex justify-center mt-6">
+        <button 
+          id="copy-alpha-badge" 
+          class="font-mono text-xs border border-p/30 px-4 py-2 bg-black/60 text-p hover:border-p hover:bg-p/10 transition-all flex items-center gap-3 rounded cursor-pointer select-none group backdrop-blur-sm"
+          title="Copiar comando de instalación alpha"
+        >
+          <span class="text-zinc-500 font-bold">$</span>
+          <span id="badge-code-text" class="tracking-wide">npm i @clxd/affer@alpha</span>
+          <div class="border-l border-zinc-800 h-4 pl-2 flex items-center">
+            <svg id="copy-badge-icon" class="w-3.5 h-3.5 text-p/60 group-hover:text-p transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+            </svg>
+          </div>
+        </button>
+      </div>
     </div>
     <div class="w-full mb-0 h-full absolute bottom-0 mix-blend-exclusion sl:mix-blend-difference">
       <canvas id="art" class="art w-full opacity-0"
@@ -19,17 +35,73 @@ import SpeedFollower from "../components/SpeedFollower.astro";
       ></canvas>
     </div>
   </div>
-  {/*<div class="w-full flex justify-center items-center relative h-400 mt-20">
-    <p>Enim ullamco tempor adipisicing dolore est. Excepteur elit occaecat aliquip consequat deserunt eiusmod. Aute commodo veniam laboris nostrud commodo commodo irure deserunt mollit culpa dolore laboris nulla. Pariatur eu mollit consectetur nisi nostrud reprehenderit laborum. Fugiat incididunt et nisi non occaecat fugiat fugiat nulla eiusmod ex commodo aliqua.</p>
 
-    <p>Qui et do eiusmod fugiat aliqua duis eiusmod elit ex minim excepteur ad laborum. Adipisicing aliqua dolore deserunt quis ullamco ex sint tempor id. Irure ex veniam enim nisi. Pariatur aliqua aute id anim nulla anim veniam dolor ea proident veniam amet tempor id. Exercitation non duis laborum eu ut do proident Lorem ea minim.</p>
+  <section class="w-full border-t border-zinc-900 bg-zinc-950/20 py-24 px-4 flex flex-col items-center font-mono relative z-10 backdrop-blur-sm">
+    <div class="max-w-4xl w-full">
+      <div class="text-center mb-12">
+        <h2 class="font-pixel-square text-xl md:text-2xl text-p mb-3 tracking-wide">// live_perception_matrix</h2>
+        <p class="text-zinc-400 text-sm max-w-xl mx-auto leading-relaxed">
+          Real-time monitoring of the browser's continuous sensor state. No listeners attached to individual components: direct, frame-by-frame atomic queries.
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-6">
+        <div class="border border-zinc-800/80 bg-black/60 p-6 rounded relative overflow-hidden flex flex-col justify-between shadow-2xl">
+          <div class="absolute top-3 right-3 text-[9px] text-zinc-600 font-bold tracking-widest uppercase select-none">Continuous State</div>
+          <div>
+            <h3 class="text-p text-sm font-bold mb-5 flex items-center gap-2 tracking-wide font-pixel-square">
+              <span class="w-2 h-2 rounded-full bg-p animate-pulse"></span>
+              Sensory Stream
+            </h3>
+            <div class="space-y-2.5 text-xs text-zinc-400" id="telemetry-data">
+              <div class="flex justify-between border-b border-zinc-900 pb-1.5"><span class="text-zinc-500">pointer_pixels:</span><span id="tel-px" class="text-white font-bold font-mono">-</span></div>
+              <div class="flex justify-between border-b border-zinc-900 pb-1.5"><span class="text-zinc-500">pointer_normalized:</span><span id="tel-norm" class="text-white font-bold font-mono">-</span></div>
+              <div class="flex justify-between border-b border-zinc-900 pb-1.5"><span class="text-zinc-500">pointer_centered_webgl:</span><span id="tel-center" class="text-p font-bold font-mono">-</span></div>
+              <div class="flex justify-between border-b border-zinc-900 pb-1.5"><span class="text-zinc-500">lerp_smoothed_pixels:</span><span id="tel-lerppx" class="text-white font-bold font-mono">-</span></div>
+              <div class="flex justify-between border-b border-zinc-900 pb-1.5"><span class="text-zinc-500">continuous_velocity:</span><span id="tel-vel" class="text-p font-bold font-mono">-</span></div>
+              <div class="flex justify-between border-b border-zinc-900 pb-1.5"><span class="text-zinc-500">cardinal_direction:</span><span id="tel-dir" class="text-white font-bold font-mono">-</span></div>
+              <div class="flex justify-between border-b border-zinc-900 pb-1.5"><span class="text-zinc-500">device_pixel_ratio_dpr:</span><span id="tel-dpr" class="text-white font-bold font-mono">-</span></div>
+              <div class="flex justify-between"><span class="text-zinc-500">viewport_metrics:</span><span id="tel-view" class="text-zinc-300 font-bold font-mono">-</span></div>
+            </div>
+          </div>
+        </div>
 
-    <p>Duis deserunt amet Lorem est irure in duis qui eiusmod mollit duis nostrud non. Adipisicing tempor proident in ut do nulla. Commodo nostrud et exercitation voluptate cupidatat deserunt cupidatat ad aliqua. Veniam commodo reprehenderit sunt pariatur Lorem dolor.</p>
-
-    <p>Culpa ex labore eiusmod velit do sit amet cillum minim nostrud cillum fugiat consectetur Lorem. Laborum reprehenderit qui ex mollit ea proident dolore. Ut nisi eu deserunt non eiusmod aute minim elit culpa. Est ex eiusmod eu tempor tempor velit labore dolor fugiat. Consectetur reprehenderit ex aute occaecat ex. Sunt occaecat duis et fugiat esse consectetur duis sit incididunt adipisicing laborum. Exercitation est consectetur Lorem duis dolore.</p>
-
-    <p>Exercitation aliquip et eiusmod esse culpa tempor. Ex fugiat sunt proident sunt esse dolor id non. Et consequat id esse consectetur mollit qui ipsum ex irure enim.</p>
-  </div>*/}
+        <div class="border border-zinc-800/80 bg-black/60 p-6 rounded flex flex-col justify-between items-center relative overflow-hidden shadow-2xl">
+          <div class="absolute top-3 right-3 text-[9px] text-zinc-600 font-bold tracking-widest uppercase select-none">Vector Plotter</div>
+          <h3 class="text-zinc-300 text-sm font-bold w-full text-left mb-4 tracking-wide font-pixel-square">Kinetic Vectorization</h3>
+          <div class="w-full flex-1 flex items-center justify-center min-h-55 border border-zinc-900 bg-zinc-950/40 rounded relative overflow-hidden group">
+            <canvas id="telemetry-canvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
+            <span id="canvas-placeholder" class="text-[10px] text-zinc-600 pointer-events-none select-none transition-opacity duration-300">touch here</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border border-zinc-800/80 bg-black/60 p-6 rounded shadow-2xl">
+        <h3 class="text-zinc-300 text-sm font-bold mb-5 flex justify-between items-center font-pixel-square tracking-wide">
+          <span>// deterministic_frame_loop</span>
+          <span id="tel-status" class="text-[10px] font-mono tracking-wider px-2 py-0.5 bg-p/10 text-p border border-p/20 rounded uppercase">State Idle</span>
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+          <div class="bg-zinc-950/50 p-3 border border-zinc-900/60 rounded">
+            <div class="text-[10px] text-zinc-500 font-bold tracking-wider uppercase">Engine FPS</div>
+            <div id="tk-fps" class="text-xl font-bold text-p mt-1 font-mono">-</div>
+          </div>
+          <div class="bg-zinc-950/50 p-3 border border-zinc-900/60 rounded">
+            <div class="text-[10px] text-zinc-500 font-bold tracking-wider uppercase">Delta Ratio</div>
+            <div id="tk-ratio" class="text-xl font-bold text-white mt-1 font-mono">-</div>
+          </div>
+          <div class="bg-zinc-950/50 p-3 border border-zinc-900/60 rounded">
+            <div class="text-[10px] text-zinc-500 font-bold tracking-wider uppercase">Processed Frames</div>
+            <div id="tk-frames" class="text-xl font-bold text-white mt-1 font-mono">-</div>
+          </div>
+          <div class="bg-zinc-950/50 p-3 border border-zinc-900/60 rounded">
+            <div class="text-[10px] text-zinc-500 font-bold tracking-wider uppercase">Elapsed Time</div>
+            <div id="tk-time" class="text-xl font-bold text-white mt-1 font-mono">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </Layout>
 
 <style>
@@ -55,8 +127,9 @@ import SpeedFollower from "../components/SpeedFollower.astro";
 
 <script>
 import type { MathArtCanvas } from "@crashlanxd/math-art";
-import { Ticker, lerp } from "@clxd/affer";
+import { Ticker, lerp, Viewport } from "@clxd/affer";
 import { $mouse } from "@/stores/input-store";
+import { $ } from "@/lib/dom-selector";
 
 const CONFIGS = [
   { "count": 200,"shape": "rect","scale": 1.5,"velocity": 0.4,"freq": 7,"twist": 0,"twirl": 0.1,"lump": -0.05,"noise": 0,"ampX": 5,"ampY": 1,"zoom": 1.95,"top": 15,"left": 0,"axis": "x","aspectRatio": 1.2,"mouseX": 0.825,"mouseY": 0.255 },
@@ -74,7 +147,7 @@ const CONFIGS = [
 let heroInstance: AbortController | null = null;
 
 document.addEventListener("astro:page-load", () => {
-  const canvas = document.querySelector("#art") as MathArtCanvas | null;
+  const canvas = $("#art") as MathArtCanvas | null;
   if (!canvas) return;
 
   if (heroInstance) heroInstance.abort();
@@ -116,36 +189,146 @@ document.addEventListener("astro:page-load", () => {
 
   const tracker = $mouse.get();
 
+  const telPx     = $("#tel-px");
+  const telNorm   = $("#tel-norm");
+  const telCenter = $("#tel-center");
+  const telLerpPx = $("#tel-lerppx");
+  const telVel    = $("#tel-vel");
+  const telDir    = $("#tel-dir");
+  const telDpr    = $("#tel-dpr");
+  const telView   = $("#tel-view");
+
+  const tkFps     = $("#tk-fps");
+  const tkRatio   = $("#tk-ratio");
+  const tkFrames  = $("#tk-frames");
+  const tkTime    = $("#tk-time");
+  const telStatus = $("#tel-status");
+
+  const telemetryCanvas = $("#telemetry-canvas") as HTMLCanvasElement | null;
+  const canvasPlaceholder = $("#canvas-placeholder");
+  const ctx: CanvasRenderingContext2D | null = telemetryCanvas?.getContext("2d") ?? null;
+
+  const syncTelemetryCanvasSize = () => {
+    if (!telemetryCanvas) return;
+    const parent = telemetryCanvas.parentElement;
+    if (parent) Viewport.resizeCanvas(telemetryCanvas, parent.clientWidth, parent.clientHeight);
+  };
+
+  if (telemetryCanvas) {
+    syncTelemetryCanvasSize();
+    window.addEventListener("resize", syncTelemetryCanvasSize, { passive: true, signal });
+  }
+
+  const copyBtn  = $("#copy-alpha-badge");
+  const codeText = $("#badge-code-text");
+  if (copyBtn && codeText) {
+    copyBtn.addEventListener("click", () => {
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText("npm i @clxd/affer@alpha").then(() => {
+        const defaultText = codeText.textContent;
+        codeText.textContent = "Copied to clipboard!";
+        codeText.classList.add("text-p");
+        setTimeout(() => {
+          codeText.textContent = defaultText;
+          codeText.classList.remove("text-p");
+        }, 1800);
+      }).catch(err => console.error("Error copying badge:", err));
+    });
+  }
+
   const tick = () => {
-    if (!canvas.artInstance || !tracker || tracker.isPressed) return;
+    if (canvas.artInstance && tracker && !tracker.isPressed) {
+      const mX = tracker.px.x, mY = tracker.px.y;
+      const isInsideCanvas = mX >= canvasRect.left && mX <= canvasRect.right && mY >= canvasRect.top && mY <= canvasRect.bottom;
 
-    const mX = tracker.px.x, mY = tracker.px.y;
-    const inInsideCanvas = mX >= canvasRect.left && mX <= canvasRect.right && mY >= canvasRect.top && mY <= canvasRect.bottom;
+      let targetX = BASE_X;
+      let targetY = BASE_Y;
 
-    let targetX = BASE_X;
-    let targetY = BASE_Y;
+      if (isInsideCanvas && tracker.isInside) {
+        const localX = (mX - canvasRect.left) / canvasRect.width;
+        const localY = (mY - canvasRect.top) / canvasRect.height;
+        targetX = BASE_X + (localX - BASE_X) * NUDGE_INTENSITY;
+        targetY = BASE_Y + (localY - BASE_Y) * NUDGE_INTENSITY;
+      }
 
-    if (inInsideCanvas && tracker.isInside) {
-      const localX = (mX - canvasRect.left) / canvasRect.width;
-      const localY = (mY - canvasRect.top) / canvasRect.height;
-      targetX = BASE_X + (localX - BASE_X) * NUDGE_INTENSITY;
-      targetY = BASE_Y + (localY - BASE_Y) * NUDGE_INTENSITY;
+      currentX = lerp(currentX, targetX, LERP_FACTOR);
+      currentY = lerp(currentY, targetY, LERP_FACTOR);
+
+      canvas.artInstance.setConfig({ mouseX: currentX, mouseY: currentY });
     }
 
-    currentX = lerp(currentX, targetX, LERP_FACTOR);
-    currentY = lerp(currentY, targetY, LERP_FACTOR);
+    if (tracker) {
+      if (telPx) telPx.textContent         = `X: ${Math.round(tracker.px.x)       } | Y: ${Math.round(tracker.px.y)}`;
+      if (telNorm) telNorm.textContent     = `X: ${tracker.normalized.x.toFixed(3)} | Y: ${tracker.normalized.y.toFixed(3)}`;
+      if (telCenter) telCenter.textContent = `X: ${tracker.centered.x.toFixed(3)  } | Y: ${tracker.centered.y.toFixed(3)}`;
+      if (telLerpPx) telLerpPx.textContent = `X: ${Math.round(tracker.lerpPx.x)   } | Y: ${Math.round(tracker.lerpPx.y)}`;
+      if (telVel) telVel.textContent       = `${Math.round(tracker.velocity)} px/s`;
+      if (telDir) telDir.textContent       = tracker.direction.toUpperCase();
+      if (telDpr) telDpr.textContent       = `${Viewport.dpr.toFixed(2)}`;
+      if (telView) telView.textContent     = `${Viewport.width}x${Viewport.height} (${Viewport.orientation})`;
+    }
 
-    canvas.artInstance.setConfig({ mouseX: currentX, mouseY: currentY });
+    const engineStats = Ticker.stats;
+    if (tkFps) tkFps.textContent         = `${engineStats.fps}`;
+    if (tkRatio) tkRatio.textContent     = `${engineStats.deltaRatio.toFixed(3)}`;
+    if (tkFrames) tkFrames.textContent   = `${engineStats.frame}`;
+    if (tkTime) tkTime.textContent       = `${engineStats.timeSeconds.toFixed(1)}s`;
+    if (telStatus) telStatus.textContent = engineStats.status;
+
+    if (telemetryCanvas && ctx && tracker) {
+      const renderW = telemetryCanvas.width / Viewport.dpr;
+      const renderH = telemetryCanvas.height / Viewport.dpr;
+      ctx.clearRect(0, 0, renderW, renderH);
+
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
+      ctx.lineWidth = 1;
+      const spacing = 20;
+      for (let x = 0; x < renderW; x += spacing) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, renderH); ctx.stroke();
+      }
+      for (let y = 0; y < renderH; y += spacing) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(renderW, y); ctx.stroke();
+      }
+
+      if (tracker.isInside) {
+        if (canvasPlaceholder) canvasPlaceholder.classList.add("opacity-0");
+        
+        const tBox = telemetryCanvas.getBoundingClientRect();
+        const localMouseX = tracker.px.x - tBox.left;
+        const localMouseY = tracker.px.y - tBox.top;
+        const localLerpX = tracker.lerpPx.x - tBox.left;
+        const localLerpY = tracker.lerpPx.y - tBox.top;
+
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue("--artStroke").trim() || "#a3e635";
+
+        ctx.strokeStyle = accentColor;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(localLerpX, localLerpY);
+        ctx.lineTo(localMouseX, localMouseY);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.beginPath();
+        ctx.arc(localMouseX, localMouseY, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = accentColor;
+        ctx.shadowColor = accentColor;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(localLerpX, localLerpY, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0; // reset
+      } else {
+        if (canvasPlaceholder) canvasPlaceholder.classList.remove("opacity-0");
+      }
+    }
   };
 
   Ticker.add(tick);
-
-  signal.addEventListener("abort", () => {
-    Ticker.remove(tick);
-  });
+  signal.addEventListener("abort", () => { Ticker.remove(tick); });
 });
 
-document.addEventListener("astro:before-preparation", () => {
-  if (heroInstance) heroInstance.abort();
-});
+document.addEventListener("astro:before-preparation", () => { if (heroInstance) heroInstance.abort(); });
 </script>
